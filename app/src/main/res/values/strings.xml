@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">定位宝</string>
+    <string name="hello">XRY Hello World!</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="title_activity_signin">signin</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
