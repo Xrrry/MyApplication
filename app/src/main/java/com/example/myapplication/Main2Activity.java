@@ -16,12 +16,15 @@ public class Main2Activity extends AppCompatActivity {
         // 隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        setContentView(R.layout.activity_main2);
+
         String name = getIntent().getStringExtra("name");
         String passwd = getIntent().getStringExtra("passwd");
         TextView tx1 = findViewById(R.id.textView5);
         TextView tx2 = findViewById(R.id.textView6);
         tx1.setText(name);
         tx2.setText(passwd);
-        setContentView(R.layout.activity_main2);
+
     }
 }

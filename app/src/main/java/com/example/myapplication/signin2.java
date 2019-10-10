@@ -20,7 +20,10 @@ public class signin2 extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        Button bt2 = findViewById(R.id.button2);
+        setContentView(R.layout.activity_signin2);
+
+
+        Button bt2 = (Button) (signin2.this.findViewById(R.id.submit));
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -35,6 +38,5 @@ public class signin2 extends AppCompatActivity {
             }
         });
 
-        setContentView(R.layout.activity_signin2);
     }
 }
