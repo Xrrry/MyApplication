@@ -18,7 +18,7 @@ import android.widget.Toast;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class signin2 extends AppCompatActivity {
+public class signin2 extends AppCompatActivity implements View.OnClickListener {
 
     private EditText etPhoneNumber;    // 电话号码
     private Button sendVerificationCode;  // 发送验证码
@@ -41,20 +41,20 @@ public class signin2 extends AppCompatActivity {
         setContentView(R.layout.activity_signin2);
 
 
-        Button bt2 = (Button) (signin2.this.findViewById(R.id.submit));
-        bt2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i2 = new Intent(signin2.this, Main2Activity.class);
-                EditText ed1 = (EditText) findViewById(R.id.editText);
-                EditText ed2 = (EditText) findViewById(R.id.editText2);
-                String name = ed1.getText().toString();
-                String passwd = ed2.getText().toString();
-                i2.putExtra("name",name);
-                i2.putExtra("passwd",passwd);
-                startActivity(i2);
-            }
-        });
+//        Button bt2 = (Button) (signin2.this.findViewById(R.id.submit));
+//        bt2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent i2 = new Intent(signin2.this, Main2Activity.class);
+//                EditText ed1 = (EditText) findViewById(R.id.editText);
+//                EditText ed2 = (EditText) findViewById(R.id.editText2);
+//                String name = ed1.getText().toString();
+//                String passwd = ed2.getText().toString();
+//                i2.putExtra("name",name);
+//                i2.putExtra("passwd",passwd);
+//                startActivity(i2);
+//            }
+//        });
 
         init();
 
@@ -72,11 +72,11 @@ public class signin2 extends AppCompatActivity {
     }
     @SuppressLint("WrongViewCast")
     private void init() {
-        etPhoneNumber = (EditText) findViewById(R.id.textView);
+        etPhoneNumber = (EditText) findViewById(R.id.editText);
         sendVerificationCode = (Button) findViewById(R.id.button2);
-        etVerificationCode = (EditText) findViewById(R.id.textView2);
+        etVerificationCode = (EditText) findViewById(R.id.editText2);
         sendVerificationCode.setOnClickListener((View.OnClickListener) this);
-        nextStep = (Button) findViewById(R.id.button);
+        nextStep = (Button) findViewById(R.id.submit);
         nextStep.setOnClickListener((View.OnClickListener) this);
     }
 
@@ -99,9 +99,9 @@ public class signin2 extends AppCompatActivity {
                 }
                 break;
 
-            case R.id.button:
+            case R.id.submit:
                 if (!TextUtils.isEmpty(etVerificationCode.getText())) {
-                    if (etVerificationCode.getText().length() == 4) {
+                    if (etVerificationCode.getText().length() == 6) {
                         verificationCode = etVerificationCode.getText().toString();
                         SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
                         flag = false;
@@ -120,6 +120,7 @@ public class signin2 extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -133,7 +134,13 @@ public class signin2 extends AppCompatActivity {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
                     // 校验验证码，返回校验的手机和国家代码
                     Toast.makeText(getApplicationContext(), "验证成功", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+                    EditText ed1 = (EditText) findViewById(R.id.editText);
+                    EditText ed2 = (EditText) findViewById(R.id.editText2);
+                    String name = ed1.getText().toString();
+                    String passwd = ed2.getText().toString();
+                    intent.putExtra("name",name);
+                    intent.putExtra("passwd",passwd);
                     startActivity(intent);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     // 获取验证码成功，true为智能验证，false为普通下发短信
