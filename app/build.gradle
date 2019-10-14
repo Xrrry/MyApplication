@@ -25,6 +25,11 @@ android {
                 outputFileName = "定位宝.apk"
             }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
 }
 
 dependencies {
@@ -35,10 +40,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation files('libs/BaiduLBS_Android.jar')
 }
 
 MobSDK {
-    appKey "2cb358f942a87"
-    appSecret "4bee63a516303500c75b4afa9597c221"
+    appKey "2cb773762567f"
+    appSecret "93fcb0f3fdd9b4e4795db0de2a46bf3e"
     SMSSDK {}
 }
