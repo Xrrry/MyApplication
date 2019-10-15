@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -27,6 +28,15 @@ public class MainActivity extends AppCompatActivity {
 //            Intent intent = new Intent(getApplicationContext(), Map.class);
 //            startActivity(intent);
 //        }
+
+        SharedPreferences sp = getSharedPreferences("login", getApplicationContext().MODE_PRIVATE);
+        String phone = sp.getString("phone", null);
+        if (phone != null) {
+            MyApplication application = (MyApplication) getApplicationContext();
+            application.setPhone(phone);
+            Intent intent = new Intent(getApplicationContext(), Map.class);
+            startActivity(intent);
+        }
 
         Button bt1 = (Button) findViewById(R.id.button);
         bt1.setOnClickListener(new View.OnClickListener() {

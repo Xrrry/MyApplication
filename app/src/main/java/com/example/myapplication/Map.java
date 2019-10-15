@@ -3,10 +3,14 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,9 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 
 public class Map extends AppCompatActivity implements BDLocationListener {
     MapView mMapView;
@@ -43,8 +50,32 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // 设置状态栏透明
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        // 设置状态栏字体颜色 黑色
+        Window window = getWindow();
+        if (window != null) {
+            Class clazz = window.getClass();
+            try {
+                int darkModeFlag = 0;
+                Class layoutParams = Class.forName("android.view.MiuiWindowManager$LayoutParams");
+                Field field = layoutParams.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+                darkModeFlag = field.getInt(layoutParams);
+                Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
+                extraFlagField.invoke(window, darkModeFlag, darkModeFlag);//状态栏透明且黑色字体
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+                    //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错，所以两个方式都要加上
+                    getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                }
+            } catch (Exception e) {
+
+            }
+        }
 
         //在使用SDK各组件之前初始化context信息，传入ApplicationContext
         SDKInitializer.initialize(getApplicationContext());
@@ -62,6 +93,10 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         mBaiduMap.setMyLocationEnabled(true);//显示定位层并且可以触发定位,默认是flase
         mLocationClient.start();//开启定位
 
+        MyApplication application = (MyApplication) getApplicationContext();
+        String phone = application.getPhone();
+        TextView tv1 = findViewById(R.id.textView8);
+        tv1.setText(phone);
 
     }
     private void initLocation() {

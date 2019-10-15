@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -136,13 +137,15 @@ public class signin2 extends AppCompatActivity implements View.OnClickListener {
                     Toast.makeText(getApplicationContext(), "验证成功", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), Map.class);
                     EditText ed1 = (EditText) findViewById(R.id.editText);
-                    EditText ed2 = (EditText) findViewById(R.id.editText2);
-                    String name = ed1.getText().toString();
-                    String passwd = ed2.getText().toString();
+                    String phone = ed1.getText().toString();
                     MyApplication application = (MyApplication) getApplicationContext();
-                    application.setPhone(name);
-                    intent.putExtra("name",name);
-                    intent.putExtra("passwd",passwd);
+                    application.setPhone(phone);
+
+                    SharedPreferences sp = getSharedPreferences("login", getApplicationContext().MODE_PRIVATE);
+                    sp.edit()
+                            .putString("phone", phone)
+                            .apply();
+
                     startActivity(intent);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     // 获取验证码成功，true为智能验证，false为普通下发短信
