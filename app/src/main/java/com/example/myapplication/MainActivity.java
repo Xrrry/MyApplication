@@ -22,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+//        MyApplication application = (MyApplication) getApplicationContext();
+//        if (application.getPhone() != null) {
+//            Intent intent = new Intent(getApplicationContext(), Map.class);
+//            startActivity(intent);
+//        }
+
         Button bt1 = (Button) findViewById(R.id.button);
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -40,7 +40,6 @@
         android:layout_marginBottom="209dp"
         android:fontFamily="sans-serif-condensed-light"
         android:gravity="center"
-        android:scaleY="1.2"
         android:text="定 位 宝"
         android:textColor="#FFFFFF"
         android:textSize="40sp"
@@ -48,8 +47,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.196" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView2"

@@ -26,7 +26,9 @@ public class Main2Activity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main2);
 
-        String name = getIntent().getStringExtra("name");
+        MyApplication application = (MyApplication) getApplicationContext();
+
+        String name = application.getPhone();
         String passwd = getIntent().getStringExtra("passwd");
         TextView tx1 = findViewById(R.id.textView5);
         TextView tx2 = findViewById(R.id.textView6);

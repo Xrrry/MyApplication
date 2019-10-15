@@ -134,11 +134,13 @@ public class signin2 extends AppCompatActivity implements View.OnClickListener {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
                     // 校验验证码，返回校验的手机和国家代码
                     Toast.makeText(getApplicationContext(), "验证成功", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), Main2Activity.class);
+                    Intent intent = new Intent(getApplicationContext(), Map.class);
                     EditText ed1 = (EditText) findViewById(R.id.editText);
                     EditText ed2 = (EditText) findViewById(R.id.editText2);
                     String name = ed1.getText().toString();
                     String passwd = ed2.getText().toString();
+                    MyApplication application = (MyApplication) getApplicationContext();
+                    application.setPhone(name);
                     intent.putExtra("name",name);
                     intent.putExtra("passwd",passwd);
                     startActivity(intent);
