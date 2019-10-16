@@ -2,15 +2,13 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Application;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,14 +20,10 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 
 import java.lang.reflect.Field;
@@ -41,7 +35,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private BaiduMap mBaiduMap;
     LocationClient mLocationClient;
     private boolean isFirstLoc = true;
-
+    BDLocation location = new BDLocation();
+    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +80,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
         setContentView(R.layout.activity_map);
         mMapView = (MapView) findViewById(R.id.bmapView);
+        mMapView.removeViewAt(1);
+        mMapView.showZoomControls(false);
         mLocationClient = new LocationClient(getApplicationContext()); //声明LocationClient类
         mLocationClient.registerLocationListener(this);//注册监听函数
         initLocation();
@@ -97,6 +94,43 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         String phone = application.getPhone();
         TextView tv1 = findViewById(R.id.textView8);
         tv1.setText(phone);
+
+        Button bt1 = (Button) findViewById(R.id.button6);
+        bt1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Map.this, my.class);
+                startActivity(i);
+            }
+        });
+
+        Button bt2 = (Button) findViewById(R.id.button7);
+        bt2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Map.this, friend.class);
+                startActivity(i);
+            }
+        });
+
+        Button bt3 = (Button) findViewById(R.id.button4);
+        bt3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Map.this, friend.class);
+                startActivity(i);
+            }
+        });
+
+        Button bt4 = (Button) findViewById(R.id.button3);
+        bt4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapStatusUpdate update = MapStatusUpdateFactory.newLatLngZoom(ll, 16);//设置地图中心及缩放级别
+                mBaiduMap.animateMapStatus(update);
+            }
+        });
+
 
     }
     private void initLocation() {
@@ -127,7 +161,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         // 设置定位数据
         mBaiduMap.setMyLocationData(locData);
         if (isFirstLoc) {
-            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+            ll = new LatLng(location.getLatitude(), location.getLongitude());
             MapStatusUpdate update = MapStatusUpdateFactory.newLatLngZoom(ll, 16);//设置地图中心及缩放级别
             mBaiduMap.animateMapStatus(update);
             isFirstLoc = false;

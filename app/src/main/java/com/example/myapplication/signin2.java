@@ -42,21 +42,6 @@ public class signin2 extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_signin2);
 
 
-//        Button bt2 = (Button) (signin2.this.findViewById(R.id.submit));
-//        bt2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent i2 = new Intent(signin2.this, Main2Activity.class);
-//                EditText ed1 = (EditText) findViewById(R.id.editText);
-//                EditText ed2 = (EditText) findViewById(R.id.editText2);
-//                String name = ed1.getText().toString();
-//                String passwd = ed2.getText().toString();
-//                i2.putExtra("name",name);
-//                i2.putExtra("passwd",passwd);
-//                startActivity(i2);
-//            }
-//        });
-
         init();
 
         EventHandler eventHandler = new EventHandler(){    // 操作回调
