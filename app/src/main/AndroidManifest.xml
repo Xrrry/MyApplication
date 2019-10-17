@@ -23,7 +23,7 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".launcher"
+        <activity android:name=".Launcher"
             android:theme="@style/AppTheme.StartingWindowTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -31,9 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".message" />
-        <activity android:name=".friend" />
-        <activity android:name=".my" />
+        <activity android:name=".Message" />
+        <activity android:name=".Friend" />
+        <activity android:name=".My" />
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -49,7 +49,7 @@
 
         </activity>
         <activity android:name=".Main2Activity" />
-        <activity android:name=".signin2" />
+        <activity android:name=".Signin" />
     </application>
 
 </manifest>

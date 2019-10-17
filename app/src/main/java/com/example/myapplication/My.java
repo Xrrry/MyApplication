@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class my extends AppCompatActivity {
+public class My extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

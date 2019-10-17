@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class launcher extends AppCompatActivity {
+public class Launcher extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +31,12 @@ public class launcher extends AppCompatActivity {
         if (phone != null) {
             MyApplication application = (MyApplication) getApplicationContext();
             application.setPhone(phone);
-            Intent intent = new Intent(launcher.this, Map.class);
+            Intent intent = new Intent(Launcher.this, Map.class);
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         }
         else {
-            Intent i = new Intent(launcher.this, MainActivity.class);
+            Intent i = new Intent(Launcher.this, MainActivity.class);
             startActivity(i);
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
         }

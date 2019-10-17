@@ -19,7 +19,7 @@ import android.widget.Toast;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
-public class signin2 extends AppCompatActivity implements View.OnClickListener {
+public class Signin extends AppCompatActivity implements View.OnClickListener {
 
     private EditText etPhoneNumber;    // 电话号码
     private Button sendVerificationCode;  // 发送验证码
@@ -39,7 +39,7 @@ public class signin2 extends AppCompatActivity implements View.OnClickListener {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_signin2);
+        setContentView(R.layout.activity_signin);
 
 
         init();

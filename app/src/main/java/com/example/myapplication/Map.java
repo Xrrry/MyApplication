@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -99,7 +98,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, my.class);
+                Intent i = new Intent(Map.this, My.class);
                 startActivity(i);
             }
         });
@@ -108,7 +107,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, friend.class);
+                Intent i = new Intent(Map.this, Friend.class);
                 startActivity(i);
             }
         });
@@ -117,7 +116,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, friend.class);
+                Intent i = new Intent(Map.this, Friend.class);
                 startActivity(i);
             }
         });
