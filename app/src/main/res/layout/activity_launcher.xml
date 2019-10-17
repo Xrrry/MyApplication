@@ -4,30 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context=".MainActivity">
-
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="230dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="300dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginBottom="300dp"
-        android:background="@drawable/bt_shape"
-        android:backgroundTintMode="add"
-        android:fontFamily="sans-serif-medium"
-        android:includeFontPadding="false"
-        android:text="手 机 登 录 / 注 册"
-        android:textColorLink="#FFFFFF"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.938" />
+    tools:context=".launcher"
+    android:background="@drawable/background">
 
     <TextView
         android:id="@+id/textView"
@@ -58,7 +36,6 @@
         android:text="定  位  美  好  生  活"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"

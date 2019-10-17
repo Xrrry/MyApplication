@@ -131,6 +131,19 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             }
         });
 
+        Button bt5 = (Button) findViewById(R.id.button5);
+        bt5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyLocationData locData = new MyLocationData.Builder()
+                        .accuracy(location.getRadius())
+                        // 此处设置开发者获取到的方向信息，顺时针0-360
+                        .direction(100).latitude(location.getLatitude())
+                        .longitude(location.getLongitude()).build();
+                // 设置定位数据
+                mBaiduMap.setMyLocationData(locData);
+            }
+        });
 
     }
     private void initLocation() {
@@ -165,7 +178,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             MapStatusUpdate update = MapStatusUpdateFactory.newLatLngZoom(ll, 16);//设置地图中心及缩放级别
             mBaiduMap.animateMapStatus(update);
             isFirstLoc = false;
-            Toast.makeText(getApplicationContext(), location.getAddrStr(), Toast.LENGTH_SHORT).show();
         }
     }
 
