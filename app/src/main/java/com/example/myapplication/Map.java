@@ -6,9 +6,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -25,10 +27,15 @@ import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 
 import java.lang.reflect.Field;
@@ -106,8 +113,14 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, My.class);
-                startActivity(i);
+//                Intent i = new Intent(Map.this, My.class);
+//                startActivity(i);
+
+                Intent i1 = new Intent();
+
+                i1.setData(Uri.parse("baidumap://map/direction?origin=name:对外经贸大学|latlng:39.98871,116.43234&destination=西直门&coord_type=bd09ll&mode=transit&sy=3&index=0&target=1&src=andr.baidu.openAPIdemo"));
+
+                startActivity(i1);
             }
         });
 
@@ -115,8 +128,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, Friend.class);
-                startActivity(i);
+//                Intent i = new Intent(Map.this, Friend.class);
+//                startActivity(i);
+
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
+                sendIntent.putExtra("sms_body", "test");
+                startActivity(sendIntent);
             }
         });
 
@@ -124,8 +141,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, Friend.class);
-                startActivity(i);
+//                Intent i = new Intent(Map.this, Friend.class);
+//                startActivity(i);
+
+                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
+                startActivity(dialIntent);
+
             }
         });
 
@@ -152,6 +173,30 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             }
         });
 
+        LatLng point = new LatLng(34.825798, 113.52572);
+//构建Marker图标
+        BitmapDescriptor bitmap = BitmapDescriptorFactory
+                .fromResource(R.drawable.location);
+//构建MarkerOption，用于在地图上添加Marker
+        OverlayOptions option = new MarkerOptions()
+                .position(point) //必传参数
+                .icon(bitmap) //必传参数
+//设置平贴地图，在地图中双指下拉查看效果
+//                .flat(true)
+                .title("1");
+//在地图上添加Marker，并显示
+        mBaiduMap.addOverlay(option);
+        mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            //marker被点击时回调的方法
+            //若响应点击事件，返回true，否则返回false
+            //默认返回false
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Toast.makeText(getApplicationContext(),"点击" + marker.getTitle() + "号点", Toast.LENGTH_SHORT).show();
+                marker.remove();
+                return false;
+            }
+        });
     }
 
     @Override
