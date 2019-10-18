@@ -1,8 +1,13 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -46,5 +51,18 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             }
         });
+
+        if (Build.VERSION.SDK_INT>=23) {
+            int request = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (request != PackageManager.PERMISSION_GRANTED)//缺少权限，进行权限申请
+            {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 123);
+            } else {
+
+            }
+        }
+        else {
+
+        }
     }
 }

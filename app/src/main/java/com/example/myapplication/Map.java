@@ -1,8 +1,13 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +15,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -35,7 +41,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     LocationClient mLocationClient;
     private boolean isFirstLoc = true;
     BDLocation location = new BDLocation();
-    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());;
+    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 Method extraFlagField = clazz.getMethod("setExtraFlags", int.class, int.class);
                 extraFlagField.invoke(window, darkModeFlag, darkModeFlag);//状态栏透明且黑色字体
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     //开发版 7.7.13 及以后版本采用了系统API，旧方法无效但不会报错，所以两个方式都要加上
                     getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
                 }
@@ -88,6 +95,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMyLocationEnabled(true);//显示定位层并且可以触发定位,默认是flase
         mLocationClient.start();//开启定位
+
 
         MyApplication application = (MyApplication) getApplicationContext();
         String phone = application.getPhone();
@@ -145,6 +153,30 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         });
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 123) {            //当然权限多了，建议使用Switch，不必纠结于此
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "权限申请成功", Toast.LENGTH_SHORT).show();
+                setContentView(R.layout.activity_map);
+                mMapView = (MapView) findViewById(R.id.bmapView);
+                mMapView.removeViewAt(1);
+                mMapView.showZoomControls(false);
+                mLocationClient = new LocationClient(getApplicationContext()); //声明LocationClient类
+                mLocationClient.registerLocationListener(this);//注册监听函数
+                initLocation();
+                // 开启定位图层
+                mBaiduMap = mMapView.getMap();
+                mBaiduMap.setMyLocationEnabled(true);//显示定位层并且可以触发定位,默认是flase
+                mLocationClient.start();//开启定位
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Toast.makeText(this, "权限申请失败，用户拒绝权限", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
         option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy
