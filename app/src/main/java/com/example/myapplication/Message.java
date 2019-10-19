@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 public class Message extends AppCompatActivity {
 
+    public int what;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
