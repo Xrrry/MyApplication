@@ -22,7 +22,6 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BubbleLayout"></activity>
         <activity android:name=".Bubble1" />
         <activity
             android:name=".Launcher"

@@ -228,6 +228,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
                 .setClickedView(bt6)
                 .setPosition(BubbleDialog.Position.TOP)
+                .setOffsetX(100)
+                .setOffsetY(250)
                 .calBar(true);
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             //marker被点击时回调的方法
@@ -236,9 +238,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Toast.makeText(getApplicationContext(), "点击" + marker.getTitle() + "号点", Toast.LENGTH_SHORT).show();
-//                LatLng p = new LatLng(marker.getPosition().latitude + 0.0005, marker.getPosition().longitude);
-//                marker.setPosition(p);
-//                marker.setFixedScreenPosition(new Point(1000,1000));
                 bd.show();
                 return false;
             }
