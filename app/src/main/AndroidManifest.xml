@@ -22,11 +22,15 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Launcher"
+        <activity android:name=".BubbleLayout"></activity>
+        <activity android:name=".Bubble1" />
+        <activity
+            android:name=".Launcher"
             android:theme="@style/AppTheme.StartingWindowTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,9 +48,7 @@
             android:process=":remote" />
 
         <activity android:name=".Map" />
-        <activity android:name=".MainActivity">
-
-        </activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".Main2Activity" />
         <activity android:name=".Signin" />
     </application>

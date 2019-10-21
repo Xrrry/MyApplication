@@ -10,11 +10,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -39,6 +41,8 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
+import com.xujiaji.happybubble.BubbleDialog;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -130,10 +134,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
         TextView tv1 = findViewById(R.id.textView8);
+
         tv1.setText(phone);
 
-
         Button bt1 = (Button) findViewById(R.id.button6);
+
+
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,6 +151,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 i1.setData(Uri.parse("baidumap://map/direction?origin=name:对外经贸大学|latlng:39.98871,116.43234&destination=西直门&coord_type=bd09ll&mode=transit&sy=3&index=0&target=1&src=andr.baidu.openAPIdemo"));
 
                 startActivity(i1);
+
             }
         });
 
@@ -202,19 +209,26 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             }
         });
 
-        LatLng point = new LatLng(location.getLatitude(),location.getLongitude());
-//构建Marker图标
+        Button bt6 = (Button) findViewById(R.id.button11);
+
+        LatLng point = new LatLng(34.82,113.53);
+        //构建Marker图标
         BitmapDescriptor bitmap = BitmapDescriptorFactory
                 .fromResource(R.drawable.circle2);
-//构建MarkerOption，用于在地图上添加Marker
-        OverlayOptions option = new MarkerOptions()
+        //构建MarkerOption，用于在地图上添加Marker
+        final OverlayOptions option = new MarkerOptions()
                 .position(point) //必传参数
                 .icon(bitmap) //必传参数
-//设置平贴地图，在地图中双指下拉查看效果
+        //设置平贴地图，在地图中双指下拉查看效果
                 .flat(true)
                 .title("1");
-//在地图上添加Marker，并显示
-        mBaiduMap.addOverlay(option);
+        //在地图上添加Marker，并显示
+        mymarker = (Marker) mBaiduMap.addOverlay(option);
+        final BubbleDialog bd = new BubbleDialog(this)
+                .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
+                .setClickedView(bt6)
+                .setPosition(BubbleDialog.Position.TOP)
+                .calBar(true);
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             //marker被点击时回调的方法
             //若响应点击事件，返回true，否则返回false
@@ -224,7 +238,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 Toast.makeText(getApplicationContext(), "点击" + marker.getTitle() + "号点", Toast.LENGTH_SHORT).show();
 //                LatLng p = new LatLng(marker.getPosition().latitude + 0.0005, marker.getPosition().longitude);
 //                marker.setPosition(p);
-                mymarker = marker;
+//                marker.setFixedScreenPosition(new Point(1000,1000));
+                bd.show();
                 return false;
             }
         });

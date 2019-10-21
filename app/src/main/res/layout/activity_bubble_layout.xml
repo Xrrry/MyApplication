@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.xujiaji.happybubble.BubbleLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bubbleLayout"
+    android:layout_width="220dp"
+    android:layout_height="150dp"
+    app:lookAt="bottom"
+    app:lookLength="16dp"
+    app:lookPosition="100dp"
+    app:lookWidth="16dp"
+    app:bubbleColor="@color/colorPrimary"/>
+
