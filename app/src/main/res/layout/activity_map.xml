@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true" >
+
     </com.baidu.mapapi.map.MapView>
 
     <TextView
@@ -85,4 +86,22 @@
         android:layout_marginBottom="50dp"
         android:background="@drawable/bt_shape1"
         />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignRight="@id/bmapView"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/d2" />
+
+    <Button
+        android:id="@+id/button13"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="120dp"
+        android:layout_alignRight="@id/bmapView"
+        android:background="@drawable/satellite" />
 </RelativeLayout>

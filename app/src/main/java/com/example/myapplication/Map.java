@@ -39,7 +39,10 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.xujiaji.happybubble.BubbleDialog;
@@ -52,7 +55,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -77,6 +82,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     String la = null;
     String ln = null;
     Marker mymarker = null;
+    List<LatLng> points = new ArrayList<LatLng>();
+    Overlay mPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +218,24 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
         Button bt6 = (Button) findViewById(R.id.button11);
 
-        LatLng point = new LatLng(34.82,113.53);
+        Button bt7 = (Button) findViewById(R.id.button12);
+        bt7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+            }
+        });
+
+        Button bt8 = (Button) findViewById(R.id.button13);
+        bt8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+            }
+        });
+
+
+        LatLng point = new LatLng(34.82, 113.53);
         //构建Marker图标
         BitmapDescriptor bitmap = BitmapDescriptorFactory
                 .fromResource(R.drawable.circle2);
@@ -219,7 +243,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         final OverlayOptions option = new MarkerOptions()
                 .position(point) //必传参数
                 .icon(bitmap) //必传参数
-        //设置平贴地图，在地图中双指下拉查看效果
+                //设置平贴地图，在地图中双指下拉查看效果
                 .flat(true)
                 .title("1");
         //在地图上添加Marker，并显示
@@ -245,7 +269,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
     }
 
-    private void startTimer(){
+    private void startTimer() {
         if (mTimer == null) {
             mTimer = new Timer();
         }
@@ -260,11 +284,11 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             };
         }
 
-        if(mTimer != null && mTimerTask != null )
+        if (mTimer != null && mTimerTask != null)
             mTimer.schedule(mTimerTask, 0, 5000);
     }
 
-    private void startTimer1(){
+    private void startTimer1() {
         if (mTimer == null) {
             mTimer = new Timer();
         }
@@ -279,7 +303,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             };
         }
 
-        if(mTimer != null && mTimerTask != null )
+        if (mTimer != null && mTimerTask != null)
             mTimer.schedule(mTimerTask, 0, 5000);
     }
 
@@ -289,13 +313,39 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "select * from phones where Phone = '17638591897' order by Time desc";
+                String sql = "select * from phones where Phone = '17638591897' order by Time desc limit 1";
                 s = c.prepareStatement(sql);
                 rs = s.executeQuery();
                 rs.next();
-                if(mymarker != null) {
-                    LatLng p = new LatLng(rs.getDouble("Lat"),rs.getDouble("Lng"));
+                if (mymarker != null) {
+                    LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
                     mymarker.setPosition(p);
+                    if(points.size() == 0){
+                        System.out.println("1");
+                        points.add(p);
+                    }
+                    else if (points.get(points.size()-1) != p) {
+                        System.out.println("2");
+                        points.add(p);
+                        if (points.size() == 2){
+                            System.out.println("3");
+                            OverlayOptions mOverlayOptions = new PolylineOptions()
+                                    .width(30)
+                                    .color(0xAA59C9A5)
+                                    .points(points);
+
+                            mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
+                        }
+                        else {
+                            System.out.println("4");
+                            OverlayOptions mOverlayOptions = new PolylineOptions()
+                                    .width(30)
+                                    .color(0xAA59C9A5)
+                                    .points(points);
+                            mPolyline.remove();
+                            mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
+                        }
+                    }
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -322,7 +372,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
                 String values = "(" + phone + "," + la + "," + ln + ")";
                 String sql = "INSERT INTO phones (Phone, Lat, Lng ) VALUES " + values;
-                if(la != null) {
+                if (la != null) {
                     s = c.prepareStatement(sql);
                     s.executeUpdate();
                 }
