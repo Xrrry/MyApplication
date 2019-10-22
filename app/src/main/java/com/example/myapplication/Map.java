@@ -320,14 +320,13 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 if (mymarker != null) {
                     LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
                     mymarker.setPosition(p);
-                    if(points.size() == 0){
+                    if (points.size() == 0) {
                         System.out.println("1");
                         points.add(p);
-                    }
-                    else if (points.get(points.size()-1) != p) {
+                    } else if (points.get(points.size() - 1) != p) {
                         System.out.println("2");
                         points.add(p);
-                        if (points.size() == 2){
+                        if (points.size() == 2) {
                             System.out.println("3");
                             OverlayOptions mOverlayOptions = new PolylineOptions()
                                     .width(30)
@@ -335,8 +334,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                                     .points(points);
 
                             mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
-                        }
-                        else {
+                        } else {
                             System.out.println("4");
                             OverlayOptions mOverlayOptions = new PolylineOptions()
                                     .width(30)
