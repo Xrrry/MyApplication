@@ -44,6 +44,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
     implementation files('libs\\mysql-connector-java-5.1.47.jar')
     implementation 'com.github.xujiaji:happy-bubble:1.1.4'
+    implementation files('libs\\android-viewbadger.jar')
 
 }
 

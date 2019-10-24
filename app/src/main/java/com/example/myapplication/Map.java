@@ -77,7 +77,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     private Timer mTimer = null;
+    private Timer mTimer1 = null;
     private TimerTask mTimerTask = null;
+    private TimerTask mTimerTask1 = null;
     String phone = "";
     String la = null;
     String ln = null;
@@ -150,14 +152,14 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(Map.this, My.class);
-//                startActivity(i);
-
-                Intent i1 = new Intent();
-
-                i1.setData(Uri.parse("baidumap://map/direction?origin=name:对外经贸大学|latlng:39.98871,116.43234&destination=西直门&coord_type=bd09ll&mode=transit&sy=3&index=0&target=1&src=andr.baidu.openAPIdemo"));
-
-                startActivity(i1);
+                Intent i = new Intent(Map.this, FriendsList.class);
+                startActivity(i);
+//
+//                Intent i1 = new Intent();
+//
+//                i1.setData(Uri.parse("baidumap://map/direction?origin=name:对外经贸大学|latlng:39.98871,116.43234&destination=西直门&coord_type=bd09ll&mode=transit&sy=3&index=0&target=1&src=andr.baidu.openAPIdemo"));
+//
+//                startActivity(i1);
 
             }
         });
@@ -289,12 +291,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     }
 
     private void startTimer1() {
-        if (mTimer == null) {
-            mTimer = new Timer();
+        if (mTimer1 == null) {
+            mTimer1 = new Timer();
         }
 
-        if (mTimerTask == null) {
-            mTimerTask = new TimerTask() {
+        if (mTimerTask1 == null) {
+            mTimerTask1 = new TimerTask() {
                 @Override
                 public void run() {
                     MyThread1 t1 = new MyThread1();
@@ -303,8 +305,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             };
         }
 
-        if (mTimer != null && mTimerTask != null)
-            mTimer.schedule(mTimerTask, 0, 5000);
+        if (mTimer1 != null && mTimerTask1 != null)
+            mTimer1.schedule(mTimerTask1, 0, 5000);
     }
 
 
@@ -313,7 +315,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "select * from phones where Phone = '17638591897' order by Time desc limit 1";
+                String sql = "select * from location where Phone = '17638591897' order by Time desc limit 1";
                 s = c.prepareStatement(sql);
                 rs = s.executeQuery();
                 rs.next();
@@ -369,7 +371,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
                 String values = "(" + phone + "," + la + "," + ln + ")";
-                String sql = "INSERT INTO phones (Phone, Lat, Lng ) VALUES " + values;
+                String sql = "INSERT INTO location (Phone, Lat, Lng ) VALUES " + values;
                 if (la != null) {
                     s = c.prepareStatement(sql);
                     s.executeUpdate();
