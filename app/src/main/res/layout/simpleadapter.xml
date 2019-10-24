@@ -12,14 +12,16 @@
         android:layout_height="50dp"
         android:layout_marginLeft="5dp"
         android:src="@drawable/head"/>
+
     <TextView
         android:id="@+id/pic_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/pic_image"
-        android:textSize="20sp"
         android:layout_marginLeft="20dp"
-        android:text="小明"/>
+        android:layout_toRightOf="@+id/pic_image"
+        android:text="小明"
+        android:textSize="19sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/pic_context"
@@ -29,5 +31,5 @@
         android:layout_marginTop="28dp"
         android:layout_marginLeft="20dp"
         android:text="18337295718"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 </RelativeLayout>

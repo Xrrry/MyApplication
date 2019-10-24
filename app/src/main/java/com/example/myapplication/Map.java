@@ -97,8 +97,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 //        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 //                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // 设置状态栏透明
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         // 设置状态栏字体颜色 黑色
         Window window = getWindow();
@@ -152,14 +152,11 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Map.this, FriendsList.class);
-                startActivity(i);
 //
-//                Intent i1 = new Intent();
-//
+                Intent i1 = new Intent(Map.this,My.class);
+
 //                i1.setData(Uri.parse("baidumap://map/direction?origin=name:对外经贸大学|latlng:39.98871,116.43234&destination=西直门&coord_type=bd09ll&mode=transit&sy=3&index=0&target=1&src=andr.baidu.openAPIdemo"));
-//
-//                startActivity(i1);
+                startActivity(i1);
 
             }
         });
@@ -174,9 +171,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 //                Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
 //                sendIntent.putExtra("sms_body", "test");
 //                startActivity(sendIntent);
-
-                startTimer();
-                Toast.makeText(getApplicationContext(), "开始发送定位", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(Map.this, FriendsList.class);
+                startActivity(i);
             }
         });
 
@@ -189,9 +185,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
 //                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
 //                startActivity(dialIntent);
-                startTimer1();
-                Toast.makeText(getApplicationContext(), "开始接收定位", Toast.LENGTH_SHORT).show();
-
+                startTimer();
+                Toast.makeText(getApplicationContext(), "开始发送定位", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -235,7 +230,14 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
             }
         });
-
+        Button bt11 = (Button) findViewById(R.id.button11);
+        bt11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startTimer1();
+                Toast.makeText(getApplicationContext(), "开始接收定位", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         LatLng point = new LatLng(34.82, 113.53);
         //构建Marker图标
@@ -263,7 +265,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             //默认返回false
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(getApplicationContext(), "点击" + marker.getTitle() + "号点", Toast.LENGTH_SHORT).show();
                 bd.show();
                 return false;
             }

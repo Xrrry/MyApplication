@@ -22,6 +22,7 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".EditName"></activity>
         <activity android:name=".Bubble1" />
         <activity
             android:name=".Launcher"
@@ -34,7 +35,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Message" />
-        <activity android:name=".Friend" />
         <activity android:name=".My" />
 
         <meta-data
