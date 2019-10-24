@@ -13,27 +13,27 @@
         android:id="@+id/Text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:text="设置"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:textColor="#000000"
         android:layout_gravity="center"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_margin="15dp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp">
+        android:layout_marginTop="30dp">
 
         <ImageView
             android:id="@+id/Image1"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginLeft="20dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="25dp"
             android:background="@drawable/head"></ImageView>
 
         <TextView
@@ -42,27 +42,27 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_toRightOf="@id/Image1"
-            android:text="肖若寅"
+            android:text="xxx"
             android:textColor="#000000"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/Text5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:layout_toRightOf="@id/Image1"
             android:textColor="#000000"
-            android:text="18337295718"
-            android:textSize="26sp"
+            android:text="xxx"
+            android:textSize="18sp"
             />
     </RelativeLayout>
     <Button
         android:id="@+id/Button1"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:text="    修改昵称"
         android:background="@color/white"
         android:gravity="left|center"
@@ -70,21 +70,21 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="10dp"
-        android:textSize="24sp"
+        android:textSize="20sp"
         style="?android:attr/borderlessButtonStyle"
         >
     </Button>
     <Button
         android:id="@+id/Button2"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:text="    关于我们"
         android:background="@color/white"
         android:gravity="left|center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
-        android:textSize="24sp"
+        android:textSize="20sp"
         style="?android:attr/borderlessButtonStyle"
         >
     </Button>
@@ -92,13 +92,13 @@
     <Button
         android:id="@+id/Button3"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:text="    退出登录"
         android:background="@color/white"
         android:gravity="left|center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:textSize="24sp"
+        android:textSize="20sp"
         style="?android:attr/borderlessButtonStyle"
         >
     </Button>

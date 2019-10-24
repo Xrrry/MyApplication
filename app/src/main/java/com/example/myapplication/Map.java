@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -57,6 +58,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -72,7 +74,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     Connection c = null;
     PreparedStatement s = null;
     ResultSet rs = null;
-    boolean flag = false;
     private static final String URL = "jdbc:mysql://cd-cdb-fvu4913e.sql.tencentcdb.com:62763/test";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
@@ -81,6 +82,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private TimerTask mTimerTask = null;
     private TimerTask mTimerTask1 = null;
     String phone = "";
+    String name = "";
     String la = null;
     String ln = null;
     Marker mymarker = null;
@@ -140,11 +142,36 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         mLocationClient.start();//开启定位
 
 
-        MyApplication application = (MyApplication) getApplicationContext();
+        final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
-        TextView tv1 = findViewById(R.id.textView8);
-
-        tv1.setText(phone);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    c = DriverManager.getConnection(URL, USERNAME, PWD);
+                    String sql = "select Name from user where Phone='" + phone + "'";
+                    s = c.prepareStatement(sql);
+                    rs = s.executeQuery();
+                    rs.next();
+                    application.setName(rs.getString("Name"));
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (rs != null) rs.close();
+                        if (s != null) s.close();
+                        if (c != null) c.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
 
         Button bt1 = (Button) findViewById(R.id.button6);
 

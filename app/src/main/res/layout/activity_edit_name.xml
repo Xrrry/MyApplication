@@ -5,51 +5,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EditName">
+    tools:context=".EditName"
+    android:background="#eeeeee">
 
     <TextView
         android:id="@+id/Text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="50dp"
         android:text="修改昵称"
         android:textColor="#000000"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        android:layout_marginTop="30dp">
 
         <TextView
             android:id="@+id/Text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
             android:text="昵称："
-            android:textSize="26sp" />
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/edittext1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
             android:layout_toRightOf="@id/Text2"
-            android:text="肖若寅"
-            android:textSize="26dp" />
+            android:hint="xxx"
+            android:textSize="20dp" />
 
     </RelativeLayout>
 
     <Button
         android:id="@+id/Button1"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_width="300dp"
+        android:layout_gravity="center"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
+        android:onClick="onClick"
         android:text="保存修改"
-        android:textSize="24sp" />
+        android:textSize="20sp" />
 
 
 </LinearLayout>
