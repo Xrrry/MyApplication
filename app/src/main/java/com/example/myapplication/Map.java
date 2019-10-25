@@ -74,7 +74,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     Connection c = null;
     PreparedStatement s = null;
     ResultSet rs = null;
-    private static final String URL = "jdbc:mysql://cd-cdb-fvu4913e.sql.tencentcdb.com:62763/test";
+    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     private Timer mTimer = null;
@@ -88,6 +88,10 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     Marker mymarker = null;
     List<LatLng> points = new ArrayList<LatLng>();
     Overlay mPolyline;
+    Boolean isOnSend = false;
+    Boolean isOnReceive = false;
+    Date date = new Date();
+    SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,8 +216,19 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
 //                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
 //                startActivity(dialIntent);
-                startTimer();
-                Toast.makeText(getApplicationContext(), "开始发送定位", Toast.LENGTH_SHORT).show();
+                if(isOnSend==false) {
+                    isOnSend = true;
+                    startTimer();
+                    Toast.makeText(getApplicationContext(), "开始发送定位", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    isOnSend = false;
+                    mTimer.cancel();
+                    mTimer = null;
+                    mTimerTask.cancel();
+                    mTimerTask = null;
+                    Toast.makeText(getApplicationContext(), "停止发送定位", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -261,8 +276,19 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startTimer1();
-                Toast.makeText(getApplicationContext(), "开始接收定位", Toast.LENGTH_SHORT).show();
+                if(isOnReceive==false) {
+                    isOnReceive = true;
+                    startTimer1();
+                    Toast.makeText(getApplicationContext(), "开始接收定位", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    isOnReceive = false;
+                    mTimer1.cancel();
+                    mTimer1 = null;
+                    mTimerTask1.cancel();
+                    mTimerTask1 = null;
+                    Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -343,7 +369,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "select * from location where Phone = '17638591897' order by Time desc limit 1";
+                String sql = "select * from location where Phone = '17638591897' order by CTime desc limit 1";
                 s = c.prepareStatement(sql);
                 rs = s.executeQuery();
                 rs.next();
@@ -398,8 +424,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String values = "(" + phone + "," + la + "," + ln + ")";
-                String sql = "INSERT INTO location (Phone, Lat, Lng ) VALUES " + values;
+                String values = "(" + phone + "," + la + "," + ln + ",'" + dateFormat.format(date) + "')";
+                String sql = "INSERT INTO location (Phone, Lat, Lng , CTime) VALUES " + values;
                 if (la != null) {
                     s = c.prepareStatement(sql);
                     s.executeUpdate();

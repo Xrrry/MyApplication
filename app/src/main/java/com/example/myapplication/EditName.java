@@ -25,7 +25,7 @@ public class EditName extends AppCompatActivity {
     Connection c = null;
     PreparedStatement s = null;
     ResultSet rs = null;
-    private static final String URL = "jdbc:mysql://cd-cdb-fvu4913e.sql.tencentcdb.com:62763/test";
+    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     String phone = "";
