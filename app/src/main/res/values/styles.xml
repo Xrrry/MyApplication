@@ -28,5 +28,15 @@
         <item name="android:windowBackground">@drawable/launcher</item>
     </style>
 
+    <style name="MyEditText" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/gray</item>
+        <item name="colorControlActivated">@color/white</item>
+    </style>
+
+    <style name="MyEditText2" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/gray</item>
+        <item name="colorControlActivated">@color/black</item>
+    </style>
+
 
 </resources>

@@ -30,10 +30,12 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
     private String verificationCode;  // 验证码
 
     private boolean flag;  // 操作是否成功
+    public static Signin instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

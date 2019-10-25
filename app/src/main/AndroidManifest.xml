@@ -22,7 +22,7 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditName"></activity>
+        <activity android:name=".EditName" />
         <activity android:name=".Bubble1" />
         <activity
             android:name=".Launcher"
@@ -47,8 +47,8 @@
             android:process=":remote" />
 
         <activity android:name=".Map" />
+        <activity android:name=".PointChoose" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".Main2Activity" />
         <activity android:name=".Signin" />
         <activity android:name=".FriendsList" />
     </application>

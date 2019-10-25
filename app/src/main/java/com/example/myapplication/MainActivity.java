@@ -15,10 +15,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
+    public static MainActivity instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏

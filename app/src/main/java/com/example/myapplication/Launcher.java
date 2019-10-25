@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.baidu.mapapi.model.LatLng;
+
 public class Launcher extends AppCompatActivity {
+    public static Launcher instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏

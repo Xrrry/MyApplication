@@ -34,6 +34,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapPoi;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -92,19 +93,23 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     Boolean isOnReceive = false;
     Date date = new Date();
     SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    public static Map instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        instance = this;
+        Launcher.instance.finish();
+        if(MainActivity.instance != null) {
+            MainActivity.instance.finish();
+        }
+        if(Signin.instance != null) {
+            Signin.instance.finish();
+        }
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // 设置状态栏透明
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         // 设置状态栏字体颜色 黑色
         Window window = getWindow();
@@ -242,16 +247,23 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         });
 
         Button bt5 = (Button) findViewById(R.id.button5);
+//        bt5.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MyLocationData locData = new MyLocationData.Builder()
+//                        .accuracy(location.getRadius())
+//                        // 此处设置开发者获取到的方向信息，顺时针0-360
+//                        .direction(100).latitude(location.getLatitude())
+//                        .longitude(location.getLongitude()).build();
+//                // 设置定位数据
+//                mBaiduMap.setMyLocationData(locData);
+//            }
+//        });
         bt5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyLocationData locData = new MyLocationData.Builder()
-                        .accuracy(location.getRadius())
-                        // 此处设置开发者获取到的方向信息，顺时针0-360
-                        .direction(100).latitude(location.getLatitude())
-                        .longitude(location.getLongitude()).build();
-                // 设置定位数据
-                mBaiduMap.setMyLocationData(locData);
+                Intent i2 = new Intent(Map.this, PointChoose.class);
+                startActivity(i2);
             }
         });
 
@@ -322,6 +334,30 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 return false;
             }
         });
+
+        BaiduMap.OnMapClickListener listener = new BaiduMap.OnMapClickListener() {
+            /**
+             * 地图单击事件回调函数
+             *
+             * @param point 点击的地理坐标
+             */
+            @Override
+            public void onMapClick(LatLng point) {
+
+            }
+
+            /**
+             * 地图内 Poi 单击事件回调函数
+             *
+             * @param mapPoi 点击的 poi 信息
+             */
+            @Override
+            public void onMapPoiClick(MapPoi mapPoi) {
+
+            }
+        };
+//设置地图单击事件监听
+        mBaiduMap.setOnMapClickListener(listener);
 
     }
 
@@ -508,22 +544,22 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
-    public class MyLocationListener extends BDAbstractLocationListener {
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            //mapView 销毁后不在处理新接收的位置
-            if (location == null || mMapView == null) {
-                return;
-            }
-            MyLocationData locData = new MyLocationData.Builder()
-                    .accuracy(location.getRadius())
-                    // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(location.getDirection()).latitude(location.getLatitude())
-                    .longitude(location.getLongitude()).build();
-            mBaiduMap.setMyLocationData(locData);
-
-        }
-    }
+//    public class MyLocationListener extends BDAbstractLocationListener {
+//        @Override
+//        public void onReceiveLocation(BDLocation location) {
+//            //mapView 销毁后不在处理新接收的位置
+//            if (location == null || mMapView == null) {
+//                return;
+//            }
+//            MyLocationData locData = new MyLocationData.Builder()
+//                    .accuracy(location.getRadius())
+//                    // 此处设置开发者获取到的方向信息，顺时针0-360
+//                    .direction(location.getDirection()).latitude(location.getLatitude())
+//                    .longitude(location.getLongitude()).build();
+//            mBaiduMap.setMyLocationData(locData);
+//
+//        }
+//    }
 
 
     @Override

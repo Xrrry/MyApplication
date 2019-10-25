@@ -1,0 +1,59 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    tools:context=".Map">
+
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true" >
+
+    </com.baidu.mapapi.map.MapView>
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="40dp"
+        android:layout_alignBottom="@id/bmapView"
+        android:layout_alignLeft="@id/bmapView"
+        android:background="@drawable/locationc" />
+
+
+    <Button
+        android:id="@+id/button11"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="确定"
+        android:textColor="#FFFFFF"
+        android:textSize="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@id/bmapView"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/bt_shape1"
+        />
+
+    <Button
+        android:id="@+id/button12"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignRight="@id/bmapView"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/d2c" />
+
+    <Button
+        android:id="@+id/button13"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="80dp"
+        android:layout_alignRight="@id/bmapView"
+        android:background="@drawable/satellitec" />
+</RelativeLayout>

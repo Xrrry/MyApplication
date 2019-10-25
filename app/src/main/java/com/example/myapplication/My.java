@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,10 +20,12 @@ import java.lang.reflect.Method;
 public class My extends AppCompatActivity {
     String name = "";
     String phone = "";
+    public static My instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
@@ -62,6 +65,23 @@ public class My extends AppCompatActivity {
                 Intent i1 = new Intent(My.this,EditName.class);
 
                 startActivity(i1);
+            }
+        });
+
+        Button bt3 = (Button) findViewById(R.id.Button3);
+        bt3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MyApplication application = (MyApplication) getApplicationContext();
+                application.setPhone("");
+                SharedPreferences sp = getSharedPreferences("login", getApplicationContext().MODE_PRIVATE);
+                sp.edit()
+                        .clear()
+                        .apply();
+                Intent i1 = new Intent(My.this, MainActivity.class);
+                startActivity(i1);
+                Map.instance.finish();
+                finish();
             }
         });
         ((TextView)findViewById(R.id.Text3)).setText(name);

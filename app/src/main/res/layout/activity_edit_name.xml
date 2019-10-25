@@ -40,7 +40,10 @@
             android:layout_marginRight="20dp"
             android:layout_toRightOf="@id/Text2"
             android:hint="xxx"
-            android:textSize="20dp" />
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:textSize="20dp"
+            android:theme="@style/MyEditText2" />
 
     </RelativeLayout>
 
