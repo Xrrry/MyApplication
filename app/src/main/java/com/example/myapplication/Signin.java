@@ -134,7 +134,6 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
                             .apply();
 
                     startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     // 获取验证码成功，true为智能验证，false为普通下发短信
                     Toast.makeText(getApplicationContext(), "验证码已发送", Toast.LENGTH_SHORT).show();
@@ -148,7 +147,7 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
                     etPhoneNumber.requestFocus();
                 } else {
                     ((Throwable) data).printStackTrace();
-                    Toast.makeText(getApplicationContext(), "手机号格式错误", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "验证码错误", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -160,9 +159,4 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
         SMSSDK.unregisterAllEventHandler(); // 注销回调接口
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
-    }
 }
