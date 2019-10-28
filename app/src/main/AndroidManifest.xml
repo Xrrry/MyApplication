@@ -22,6 +22,7 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".StartShare" />
         <activity android:name=".EditName" />
         <activity android:name=".Bubble1" />
         <activity

@@ -40,7 +40,8 @@ public class FriendsList extends AppCompatActivity {
     Connection c = null;
     PreparedStatement s = null;
     ResultSet rs = null;
-    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";    private static final String USERNAME = "root";
+    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
+    private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     String phone = "";
     final Handler myHandler = new Handler();
@@ -52,8 +53,6 @@ public class FriendsList extends AppCompatActivity {
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
-//        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         // 设置状态栏字体颜色 黑色
         Window window = getWindow();

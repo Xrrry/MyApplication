@@ -264,7 +264,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i2 = new Intent(Map.this, PointChoose.class);
+                Intent i2 = new Intent(Map.this, StartShare.class);
                 startActivity(i2);
             }
         });
