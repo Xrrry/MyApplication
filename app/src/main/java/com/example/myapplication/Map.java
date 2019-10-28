@@ -108,6 +108,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     List<User> users = new ArrayList<User>();
     List<String> p;
     List<String> n;
+    List<Marker> m;
+    List<List<LatLng>> po;
+    List<Polyline> pl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -525,25 +528,25 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     s = c.prepareStatement(sql);
                     rs = s.executeQuery();
                     rs.next();
-                    if (users.get(i) != null) {
+                    if (m.get(i) != null) {
                         LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
-                        mymarker.setPosition(p);
-                        if (points.size() == 0) {
-                            points.add(p);
-                        } else if (points.get(points.size() - 1) != p) {
-                            points.add(p);
-                            if (points.size() == 2) {
+                        m.get(i).setPosition(p);
+                        if (po.get(i).size() == 0) {
+                            po.get(i).add(p);
+                        } else if (po.get(i).get(po.get(i).size() - 1) != p) {
+                            po.get(i).add(p);
+                            if (po.get(i).size() == 2) {
                                 OverlayOptions mOverlayOptions = new PolylineOptions()
                                         .width(30)
                                         .color(0xAA59C9A5)
-                                        .points(points);
+                                        .points(po.get(i));
 
                                 mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
                             } else {
                                 OverlayOptions mOverlayOptions = new PolylineOptions()
                                         .width(30)
                                         .color(0xAA59C9A5)
-                                        .points(points);
+                                        .points(po.get(i));
                                 mPolyline.remove();
                                 mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
                             }
