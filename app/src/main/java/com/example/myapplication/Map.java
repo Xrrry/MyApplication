@@ -64,6 +64,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+class User
+{
+    private String phone;
+    private String name;
+    private double la;
+    private double ln;
+    private Marker marker;
+}
+
 
 public class Map extends AppCompatActivity implements BDLocationListener {
     MapView mMapView;
@@ -80,8 +89,10 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private static final String PWD = "xiaoruoruo1999";
     private Timer mTimer = null;
     private Timer mTimer1 = null;
+    private Timer mTimer2 = null;
     private TimerTask mTimerTask = null;
     private TimerTask mTimerTask1 = null;
+    private TimerTask mTimerTask2 = null;
     String phone = "";
     String name = "";
     String la = null;
@@ -94,6 +105,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     Date date = new Date();
     SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     public static Map instance;
+    List<User> users = new ArrayList<User>();
+    List<String> p;
+    List<String> n;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,24 +396,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             mTimer.schedule(mTimerTask, 0, 5000);
     }
 
-    private void startTimer1() {
-        if (mTimer1 == null) {
-            mTimer1 = new Timer();
-        }
-
-        if (mTimerTask1 == null) {
-            mTimerTask1 = new TimerTask() {
-                @Override
-                public void run() {
-                    MyThread1 t1 = new MyThread1();
-                    t1.run();
-                }
-            };
-        }
-
-        if (mTimer1 != null && mTimerTask1 != null)
-            mTimer1.schedule(mTimerTask1, 0, 5000);
-    }
 
     class MyThread implements Runnable {
         public void run() {
@@ -430,6 +426,25 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
+    private void startTimer1() {
+        if (mTimer1 == null) {
+            mTimer1 = new Timer();
+        }
+
+        if (mTimerTask1 == null) {
+            mTimerTask1 = new TimerTask() {
+                @Override
+                public void run() {
+                    MyThread1 t1 = new MyThread1();
+                    t1.run();
+                }
+            };
+        }
+
+        if (mTimer1 != null && mTimerTask1 != null)
+            mTimer1.schedule(mTimerTask1, 0, 5000);
+    }
+
     class MyThread1 implements Runnable {
         public void run() {
             try {
@@ -443,13 +458,10 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
                     mymarker.setPosition(p);
                     if (points.size() == 0) {
-                        System.out.println("1");
                         points.add(p);
                     } else if (points.get(points.size() - 1) != p) {
-                        System.out.println("2");
                         points.add(p);
                         if (points.size() == 2) {
-                            System.out.println("3");
                             OverlayOptions mOverlayOptions = new PolylineOptions()
                                     .width(30)
                                     .color(0xAA59C9A5)
@@ -457,7 +469,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
                             mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
                         } else {
-                            System.out.println("4");
                             OverlayOptions mOverlayOptions = new PolylineOptions()
                                     .width(30)
                                     .color(0xAA59C9A5)
@@ -485,6 +496,77 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
+    private void startTimer2() {
+        if (mTimer2 == null) {
+            mTimer2 = new Timer();
+        }
+
+        if (mTimerTask2 == null) {
+            mTimerTask2 = new TimerTask() {
+                @Override
+                public void run() {
+                    MyThread2 t2 = new MyThread2();
+                    t2.run();
+                }
+            };
+        }
+
+        if (mTimer2 != null && mTimerTask2 != null)
+            mTimer2.schedule(mTimerTask2, 0, 5000);
+    }
+
+    class MyThread2 implements Runnable {
+        public void run() {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                c = DriverManager.getConnection(URL, USERNAME, PWD);
+                for(int i=0;i<p.size();i++) {
+                    String sql = "select * from location where Phone = '" + p.get(i) +"' order by CTime desc limit 1";
+                    s = c.prepareStatement(sql);
+                    rs = s.executeQuery();
+                    rs.next();
+                    if (users.get(i) != null) {
+                        LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
+                        mymarker.setPosition(p);
+                        if (points.size() == 0) {
+                            points.add(p);
+                        } else if (points.get(points.size() - 1) != p) {
+                            points.add(p);
+                            if (points.size() == 2) {
+                                OverlayOptions mOverlayOptions = new PolylineOptions()
+                                        .width(30)
+                                        .color(0xAA59C9A5)
+                                        .points(points);
+
+                                mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
+                            } else {
+                                OverlayOptions mOverlayOptions = new PolylineOptions()
+                                        .width(30)
+                                        .color(0xAA59C9A5)
+                                        .points(points);
+                                mPolyline.remove();
+                                mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
+                            }
+                        }
+                    }
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (rs != null) rs.close();
+                    if (s != null) s.close();
+                    if (c != null) c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 
     @Override
@@ -547,29 +629,17 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
-//    public class MyLocationListener extends BDAbstractLocationListener {
-//        @Override
-//        public void onReceiveLocation(BDLocation location) {
-//            //mapView 销毁后不在处理新接收的位置
-//            if (location == null || mMapView == null) {
-//                return;
-//            }
-//            MyLocationData locData = new MyLocationData.Builder()
-//                    .accuracy(location.getRadius())
-//                    // 此处设置开发者获取到的方向信息，顺时针0-360
-//                    .direction(location.getDirection()).latitude(location.getLatitude())
-//                    .longitude(location.getLongitude()).build();
-//            mBaiduMap.setMyLocationData(locData);
-//
-//        }
-//    }
-
 
     @Override
     protected void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
+        final MyApplication application = (MyApplication) getApplicationContext();
+        if(application.getStartShare()) {
+            p = application.getPhones();
+            n = application.getNames();
+        }
     }
 
     @Override

@@ -71,7 +71,6 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     //存放数据
     private List<Map<String,Object>> contactsList;
     private Map<String,Object> map;
-    private int image = R.drawable.head;
     private HashMap<Integer,Boolean> hashMap;
     private HashMap<Integer,Boolean> hashMap1;
     Connection c = null;
@@ -83,11 +82,8 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     String phone = "";
     final Handler myHandler = new Handler();
     private List<Map<String, Object>> list;
-    private ListView listview_1;
-    private double la;
-    private double ln;
-    final Handler myHandler1 = new Handler();
-    private boolean hasrestart = false;
+    private List<String> p;
+    private List<String> n;
 
 
 
@@ -121,7 +117,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
 
         setContentView(R.layout.activity_start_share);
 
-        MyApplication application = (MyApplication) getApplicationContext();
+        final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
 
         hashMap = new HashMap<Integer, Boolean>();
@@ -186,9 +182,14 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
             public void onClick(View v) {
                 for(int i=0;i<list.size();i++){
                     if(hashMap.get(i)==true){
-                        System.out.println(i);
+                        p.add(list.get(i).get("context").toString());
+                        n.add(list.get(i).get("name").toString());
                     }
                 }
+                application.setStartShare(true);
+                application.setPhones(p);
+                application.setNames(n);
+                finish();
             }
         });
         btn_destine.setOnClickListener(new View.OnClickListener() {
@@ -196,9 +197,14 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
             public void onClick(View v) {
                 for(int i=0;i<list.size();i++){
                     if(hashMap1.get(i)==true){
-                        System.out.println(i);
+                        p.add(list.get(i).get("context").toString());
+                        n.add(list.get(i).get("name").toString());
                     }
                 }
+                application.setStartShare(true);
+                application.setPhones(p);
+                application.setNames(n);
+                finish();
             }
         });
         bt_choose.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +230,6 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 if(hashMap.get(position)==false)
                     hashMap.put(position,true);
                 else hashMap.put(position,false);
-                System.out.println(position);
             }
         });
         contacts1.setOnItemClickListener(new AdapterView.OnItemClickListener() {

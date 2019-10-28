@@ -16,6 +16,9 @@ public class MyApplication extends Application {
     private String name;
     private double la = 0;
     private double ln = 0;
+    private List<String> phones;
+    private List<String> names;
+    private boolean isStartShare = false;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -24,7 +27,6 @@ public class MyApplication extends Application {
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -33,10 +35,10 @@ public class MyApplication extends Application {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
+
     public double getLa() {
         return la;
     }
@@ -49,6 +51,27 @@ public class MyApplication extends Application {
     }
     public void setLn(double ln){
         this.ln = ln;
+    }
+
+    public List<String> getPhones() {
+        return phones;
+    }
+    public void setPhones(List<String> p) {
+        this.phones = p;
+    }
+
+    public List<String> getNames() {
+        return names;
+    }
+    public void setNames(List<String> n) {
+        this.names = n;
+    }
+
+    public boolean getStartShare () {
+        return isStartShare;
+    }
+    public void setStartShare(boolean i) {
+        this.isStartShare = i;
     }
 
 }
