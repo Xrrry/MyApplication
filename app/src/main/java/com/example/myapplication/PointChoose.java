@@ -155,6 +155,9 @@ public class PointChoose extends AppCompatActivity implements BDLocationListener
             @Override
             public void onClick(View v) {
                 System.out.println(String.valueOf(p.latitude) + String.valueOf(p.longitude));
+                MyApplication application = (MyApplication) getApplicationContext();
+                application.setLa(p.latitude);
+                application.setLn(p.longitude);
                 finish();
             }
         });

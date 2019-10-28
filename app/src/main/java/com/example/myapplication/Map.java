@@ -401,6 +401,34 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             mTimer1.schedule(mTimerTask1, 0, 5000);
     }
 
+    class MyThread implements Runnable {
+        public void run() {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                c = DriverManager.getConnection(URL, USERNAME, PWD);
+                String values = "(" + phone + "," + la + "," + ln + ",'" + dateFormat.format(date) + "')";
+                String sql = "INSERT INTO location (Phone, Lat, Lng , CTime) VALUES " + values;
+                if (la != null) {
+                    s = c.prepareStatement(sql);
+                    s.executeUpdate();
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (rs != null) rs.close();
+                    if (s != null) s.close();
+                    if (c != null) c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     class MyThread1 implements Runnable {
         public void run() {
@@ -457,34 +485,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
-    class MyThread implements Runnable {
-        public void run() {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String values = "(" + phone + "," + la + "," + ln + ",'" + dateFormat.format(date) + "')";
-                String sql = "INSERT INTO location (Phone, Lat, Lng , CTime) VALUES " + values;
-                if (la != null) {
-                    s = c.prepareStatement(sql);
-                    s.executeUpdate();
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (rs != null) rs.close();
-                    if (s != null) s.close();
-                    if (c != null) c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

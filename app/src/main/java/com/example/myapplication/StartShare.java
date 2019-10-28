@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,12 +10,16 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -79,6 +84,10 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     final Handler myHandler = new Handler();
     private List<Map<String, Object>> list;
     private ListView listview_1;
+    private double la;
+    private double ln;
+    final Handler myHandler1 = new Handler();
+    private boolean hasrestart = false;
 
 
 
@@ -171,6 +180,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
 
         Button btn_share = view1.findViewById(R.id.share);
         Button btn_destine = view2.findViewById(R.id.confirm);
+        Button bt_choose = view2.findViewById(R.id.choosepoint);
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -191,6 +201,13 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 }
             }
         });
+        bt_choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(StartShare.this,PointChoose.class);
+                startActivity(i);
+            }
+        });
         contacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -199,10 +216,10 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 CheckBox checkBox = view.findViewById(R.id.checkbox);
                 if(checkBox.isSelected()){
                     checkBox.setSelected(false);
-                    view.setBackgroundColor(Color.parseColor("#ADD8E6"));
+                    view.setBackgroundColor(Color.parseColor("#ffffff"));
                 }else{
                     checkBox.setSelected(true);
-                    view.setBackgroundColor(Color.parseColor("#25AC66"));
+                    view.setBackgroundColor(Color.parseColor("#bbbbbb"));
                 }
                 if(hashMap.get(position)==false)
                     hashMap.put(position,true);
@@ -218,10 +235,10 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 CheckBox checkBox = view.findViewById(R.id.checkbox);
                 if(checkBox.isSelected()){
                     checkBox.setSelected(false);
-                    view.setBackgroundColor(Color.parseColor("#ADD8E6"));
+                    view.setBackgroundColor(Color.parseColor("#ffffff"));
                 }else{
                     checkBox.setSelected(true);
-                    view.setBackgroundColor(Color.parseColor("#25AC66"));
+                    view.setBackgroundColor(Color.parseColor("#bbbbbb"));
                 }
                 if(hashMap1.get(position)==false)
                     hashMap1.put(position,true);
@@ -290,6 +307,15 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final MyApplication application = (MyApplication) getApplicationContext();
+        if(application.getLa()>1e-3) {
+            Toast.makeText(getApplicationContext(), "已选取地址", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener{
 
@@ -350,6 +376,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
             int[] to = {R.id.image,R.id.name, R.id.tel};
             adapter = new SimpleAdapter(getApplicationContext(), list, R.layout.list_item, form, to);
             contacts.setAdapter(adapter);
+            contacts1.setAdapter(adapter);
         }
     };
 }

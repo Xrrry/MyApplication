@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".StartShare">
 
     <LinearLayout
         android:id="@+id/LinearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="50.0dip"
-        android:background="#FFFFFF">
+        android:layout_height="50dp"
+        android:background="#FFFFFF"
+        android:layout_marginTop="40dp">
 
         <!-- layout_weight属性为权重，让两个textview平分linearLayout-->
         <TextView
@@ -19,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:gravity="center"
-            android:text="location_share"
+            android:text="共享位置"
             android:textColor="#000000"
             android:textSize="20sp"
             android:background="@drawable/selector"/>
@@ -29,7 +30,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.0"
             android:gravity="center"
-            android:text="destination"
+            android:text="地图选点"
             android:textColor="#000000"
             android:textSize="20sp"
             android:background="@drawable/selector"/>
