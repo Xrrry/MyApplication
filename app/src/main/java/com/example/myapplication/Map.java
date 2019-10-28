@@ -100,9 +100,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
         super.onCreate(savedInstanceState);
         instance = this;
-        Launcher.instance.finish();
-        Signin.instance.finish();
-        MainActivity.instance.finish();
+        if(Launcher.instance != null){
+            Launcher.instance.finish();
+        }
         if(MainActivity.instance != null) {
             MainActivity.instance.finish();
         }
