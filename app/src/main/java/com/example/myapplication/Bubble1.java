@@ -1,14 +1,58 @@
 package com.example.myapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
 
-import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
-public class Bubble1 extends AppCompatActivity {
+import com.xujiaji.happybubble.BubbleDialog;
+
+
+public class Bubble1 extends BubbleDialog implements View.OnClickListener {
+    private ViewHolder mViewHolder;
+    private OnClickCustomButtonListener mListener;
+
+
+    public Bubble1(Context context) {
+        super(context);
+        View rootView = LayoutInflater.from(context).inflate(R.layout.activity_bubble1, null);
+        mViewHolder = new ViewHolder(rootView);
+        addContentView(rootView);
+        mViewHolder.btn8.setOnClickListener(this);
+        mViewHolder.btn9.setOnClickListener(this);
+        mViewHolder.btn10.setOnClickListener(this);
+
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bubble1);
+    public void onClick(View v) {
+        if (mListener != null)
+        {
+            mListener.onClick(((Button)v).getText().toString());
+        }
     }
+
+    private static class ViewHolder
+    {
+        Button btn8,btn9,btn10;
+        public ViewHolder(View rootView)
+        {
+            btn8 = rootView.findViewById(R.id.button8);
+            btn9 = rootView.findViewById(R.id.button9);
+            btn10 = rootView.findViewById(R.id.button10);
+        }
+    }
+
+    public void setClickListener(OnClickCustomButtonListener l)
+    {
+        this.mListener = l;
+    }
+
+    public interface OnClickCustomButtonListener
+    {
+        void onClick(String str);
+    }
+
+
 }

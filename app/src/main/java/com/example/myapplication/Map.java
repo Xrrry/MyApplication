@@ -83,7 +83,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     LocationClient mLocationClient;
     private boolean isFirstLoc = true;
     BDLocation location = new BDLocation();
-    LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+    LatLng ll = new LatLng(0,0);
     Connection c = null;
     PreparedStatement s = null;
     PreparedStatement s2 = null;
@@ -113,9 +113,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private View v;
     private TextView p;
     private TextView n;
+    boolean isOnOther = false;
 
-    @SuppressLint("HandlerLeak")
-    public Handler handlerUI = new Handler(){
+    public Handler handlerUI = new Handler() {
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -269,6 +269,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     mTimer = null;
                     mTimerTask.cancel();
                     mTimerTask = null;
+                    application.setStartShare(false);
                     Toast.makeText(getApplicationContext(), "停止发送定位", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -321,6 +322,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 if (isOnReceive == false) {
                     Intent i2 = new Intent(Map.this, StartShare.class);
                     startActivity(i2);
+//                    Intent i2 = new Intent(Map.this, Changetest.class);
+//                    startActivity(i2);
                 } else {
                     isOnReceive = false;
                     mTimer2.cancel();
@@ -339,6 +342,30 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 .setOffsetX(100)
                 .setOffsetY(250)
                 .calBar(true);
+        final Bubble1 codDialog = new Bubble1(this)
+//                .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
+                .setPosition(BubbleDialog.Position.TOP)
+                .setClickedView(bt6)
+                .setOffsetX(100)
+                .setOffsetY(250)
+                .calBar(true);
+        codDialog.setClickListener(new Bubble1.OnClickCustomButtonListener() {
+            @Override
+            public void onClick(String str) {
+                if (str.equals("电话")) {
+                    isOnOther = true;
+                    Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + targetPhone));//跳转到拨号界面，同时传递电话号码
+                    startActivity(dialIntent);
+                } else if (str.equals("短信")) {
+                    isOnOther = true;
+                    Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + targetPhone));//跳转到拨号界面，同时传递电话号码
+                    startActivity(sendIntent);
+                } else {
+                    System.out.println(str);
+                }
+            }
+        });
+
 
         v = LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null);
         n = v.findViewById(R.id.textView11);
@@ -349,25 +376,25 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             //默认返回false
             @Override
             public boolean onMarkerClick(Marker marker) {
-                bd.show();
+                codDialog.show();
                 final User u = users.get(Integer.valueOf(marker.getTitle()));
-                targetLa = u.list.get(u.list.size()-1).latitude;
-                targetLn = u.list.get(u.list.size()-1).longitude;
+                targetLa = u.list.get(u.list.size() - 1).latitude;
+                targetLn = u.list.get(u.list.size() - 1).longitude;
                 targetName = u.name;
                 targetPhone = u.phone;
                 new Thread() {
                     @Override
                     public void run() {
-//                        Message message = Message.obtain();
-//                        message.what = 1;
-//                        handlerUI.sendMessage(message);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                n.setText(targetName);
-                                p.setText(targetPhone);
-                            }
-                        });
+                        Message message = new Message();
+                        message.what = 1;
+                        handlerUI.sendMessage(message);
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                n.setText(targetName);
+//                                p.setText(targetPhone);
+//                            }
+//                        });
                     }
                 }.start();
                 return false;
@@ -575,6 +602,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         // 设置定位数据
         la = String.valueOf(location.getLatitude());
         ln = String.valueOf(location.getLongitude());
+        ll = new LatLng(location.getLatitude(),location.getLongitude());
         mBaiduMap.setMyLocationData(locData);
         if (isFirstLoc) {
             ll = new LatLng(location.getLatitude(), location.getLongitude());
@@ -592,43 +620,48 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         mMapView.onResume();
         final MyApplication application = (MyApplication) getApplicationContext();
         if (application.getStartShare()) {
-            LatLng point = new LatLng(0, 0);
-            LatLng p = new LatLng(application.getLa(),application.getLn());
-            //构建Marker图标
-            BitmapDescriptor bitmap = BitmapDescriptorFactory
-                    .fromResource(R.drawable.circle2);
+            if (!isOnOther) {
+                LatLng point = new LatLng(0, 0);
+                LatLng p = new LatLng(application.getLa(), application.getLn());
+                //构建Marker图标
+                BitmapDescriptor bitmap = BitmapDescriptorFactory
+                        .fromResource(R.drawable.circle2);
 
-            BitmapDescriptor loc = BitmapDescriptorFactory
-                    .fromResource(R.drawable.mark);
+                BitmapDescriptor loc = BitmapDescriptorFactory
+                        .fromResource(R.drawable.mark);
 
-            final OverlayOptions opt = new MarkerOptions()
-                    .position(p) //必传参数
-                    .icon(loc) //必传参数
-                    //设置平贴地图，在地图中双指下拉查看效果
-                    .flat(true);
-
-            mBaiduMap.addOverlay(opt);
-
-            for (int i = 0; i < application.getPhones().size(); i++) {
-                //构建MarkerOption，用于在地图上添加Marker
-                final OverlayOptions option = new MarkerOptions()
-                        .position(point) //必传参数
-                        .icon(bitmap) //必传参数
+                final OverlayOptions opt = new MarkerOptions()
+                        .position(p) //必传参数
+                        .icon(loc) //必传参数
                         //设置平贴地图，在地图中双指下拉查看效果
-                        .flat(true)
-                        .title(String.valueOf(i));
+                        .flat(true);
 
-                User u = new User();
-                u.phone = application.getPhones().get(i);
-                u.name = application.getNames().get(i);
-                //在地图上添加Marker，并显示
-                u.marker = (Marker) mBaiduMap.addOverlay(option);
-                u.list = new ArrayList<LatLng>();
-                users.add(u);
+                mBaiduMap.addOverlay(opt);
+
+                for (int i = 0; i < application.getPhones().size(); i++) {
+                    //构建MarkerOption，用于在地图上添加Marker
+                    final OverlayOptions option = new MarkerOptions()
+                            .position(point) //必传参数
+                            .icon(bitmap) //必传参数
+                            //设置平贴地图，在地图中双指下拉查看效果
+                            .flat(true)
+                            .title(String.valueOf(i));
+
+                    User u = new User();
+                    u.phone = application.getPhones().get(i);
+                    u.name = application.getNames().get(i);
+                    //在地图上添加Marker，并显示
+                    u.marker = (Marker) mBaiduMap.addOverlay(option);
+                    u.list = new ArrayList<LatLng>();
+                    users.add(u);
+                }
+                startTimer();
+                startTimer2();
+                Toast.makeText(getApplicationContext(), "开始接受定位", Toast.LENGTH_SHORT).show();
             }
-            startTimer();
-            startTimer2();
-            Toast.makeText(getApplicationContext(), "开始接受定位", Toast.LENGTH_SHORT).show();
+            else {
+                isOnOther = false;
+            }
         }
     }
 
