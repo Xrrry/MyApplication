@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,11 +17,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +48,7 @@ import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.xujiaji.happybubble.BubbleDialog;
@@ -69,6 +73,7 @@ class User {
     String name;
     Marker marker;
     List<LatLng> list;
+    Overlay polyline;
 }
 
 
@@ -81,30 +86,50 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
     Connection c = null;
     PreparedStatement s = null;
+    PreparedStatement s2 = null;
     ResultSet rs = null;
     private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     private Timer mTimer = null;
-    private Timer mTimer1 = null;
     private Timer mTimer2 = null;
     private TimerTask mTimerTask = null;
-    private TimerTask mTimerTask1 = null;
     private TimerTask mTimerTask2 = null;
     String phone = "";
     String name = "";
     String la = null;
     String ln = null;
-    Marker mymarker = null;
-    List<LatLng> points = new ArrayList<LatLng>();
-    Overlay mPolyline;
+    double targetLa = 0;
+    double targetLn = 0;
+    String targetName;
+    String targetPhone;
     Boolean isOnSend = false;
     Boolean isOnReceive = false;
     Date date = new Date();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     public static Map instance;
     List<User> users = new ArrayList<User>();
-    List<Overlay> polyLineList = new ArrayList<>();
+    final Handler handler = new Handler();
+    private View v;
+    private TextView p;
+    private TextView n;
+
+    @SuppressLint("HandlerLeak")
+    public Handler handlerUI = new Handler(){
+
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    n.setText(targetName);
+                    p.setText(targetPhone);
+                    System.out.println(targetName);
+                    System.out.println(targetPhone);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,23 +284,16 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         });
 
         Button bt5 = (Button) findViewById(R.id.button5);
-//        bt5.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MyLocationData locData = new MyLocationData.Builder()
-//                        .accuracy(location.getRadius())
-//                        // 此处设置开发者获取到的方向信息，顺时针0-360
-//                        .direction(100).latitude(location.getLatitude())
-//                        .longitude(location.getLongitude()).build();
-//                // 设置定位数据
-//                mBaiduMap.setMyLocationData(locData);
-//            }
-//        });
         bt5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i2 = new Intent(Map.this, StartShare.class);
-                startActivity(i2);
+                MyLocationData locData = new MyLocationData.Builder()
+                        .accuracy(location.getRadius())
+                        // 此处设置开发者获取到的方向信息，顺时针0-360
+                        .direction(100).latitude(location.getLatitude())
+                        .longitude(location.getLongitude()).build();
+                // 设置定位数据
+                mBaiduMap.setMyLocationData(locData);
             }
         });
 
@@ -301,20 +319,18 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             @Override
             public void onClick(View v) {
                 if (isOnReceive == false) {
-                    isOnReceive = true;
-                    startTimer1();
-                    Toast.makeText(getApplicationContext(), "开始接收定位", Toast.LENGTH_SHORT).show();
+                    Intent i2 = new Intent(Map.this, StartShare.class);
+                    startActivity(i2);
                 } else {
                     isOnReceive = false;
-                    mTimer1.cancel();
-                    mTimer1 = null;
-                    mTimerTask1.cancel();
-                    mTimerTask1 = null;
+                    mTimer2.cancel();
+                    mTimer2 = null;
+                    mTimerTask2.cancel();
+                    mTimerTask2 = null;
                     Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
 
         final BubbleDialog bd = new BubbleDialog(this)
                 .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
@@ -323,6 +339,10 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 .setOffsetX(100)
                 .setOffsetY(250)
                 .calBar(true);
+
+        v = LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null);
+        n = v.findViewById(R.id.textView11);
+        p = v.findViewById(R.id.textView12);
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             //marker被点击时回调的方法
             //若响应点击事件，返回true，否则返回false
@@ -330,9 +350,30 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 bd.show();
+                final User u = users.get(Integer.valueOf(marker.getTitle()));
+                targetLa = u.list.get(u.list.size()-1).latitude;
+                targetLn = u.list.get(u.list.size()-1).longitude;
+                targetName = u.name;
+                targetPhone = u.phone;
+                new Thread() {
+                    @Override
+                    public void run() {
+//                        Message message = Message.obtain();
+//                        message.what = 1;
+//                        handlerUI.sendMessage(message);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                n.setText(targetName);
+                                p.setText(targetPhone);
+                            }
+                        });
+                    }
+                }.start();
                 return false;
             }
         });
+
 
         BaiduMap.OnMapClickListener listener = new BaiduMap.OnMapClickListener() {
             /**
@@ -409,75 +450,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
-    private void startTimer1() {
-        if (mTimer1 == null) {
-            mTimer1 = new Timer();
-        }
-
-        if (mTimerTask1 == null) {
-            mTimerTask1 = new TimerTask() {
-                @Override
-                public void run() {
-                    MyThread1 t1 = new MyThread1();
-                    t1.run();
-                }
-            };
-        }
-
-        if (mTimer1 != null && mTimerTask1 != null)
-            mTimer1.schedule(mTimerTask1, 0, 5000);
-    }
-
-    class MyThread1 implements Runnable {
-        public void run() {
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-                c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "select * from location where Phone = '17638591897' order by CTime desc limit 1";
-                s = c.prepareStatement(sql);
-                rs = s.executeQuery();
-                rs.next();
-                if (mymarker != null) {
-                    LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
-                    mymarker.setPosition(p);
-                    if (points.size() == 0) {
-                        points.add(p);
-                    } else if (points.get(points.size() - 1) != p) {
-                        points.add(p);
-                        if (points.size() == 2) {
-                            OverlayOptions mOverlayOptions = new PolylineOptions()
-                                    .width(30)
-                                    .color(0xAA59C9A5)
-                                    .points(points);
-
-                            mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
-                        } else {
-                            OverlayOptions mOverlayOptions = new PolylineOptions()
-                                    .width(30)
-                                    .color(0xAA59C9A5)
-                                    .points(points);
-                            mPolyline.remove();
-                            mPolyline = mBaiduMap.addOverlay(mOverlayOptions);
-                        }
-                    }
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    if (rs != null) rs.close();
-                    if (s != null) s.close();
-                    if (c != null) c.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     private void startTimer2() {
         if (mTimer2 == null) {
@@ -503,35 +475,31 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
+                isOnReceive = true;
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
-                    String sql = "select * from location where Phone = '" + user.phone + "' order by CTime desc limit 1";
-                    s = c.prepareStatement(sql);
-                    rs = s.executeQuery();
+                    String sql2 = "select * from location where Phone = '" + user.phone + "' order by CTime desc limit 1";
+                    s2 = c.prepareStatement(sql2);
+                    rs = s2.executeQuery();
                     if (rs.next()) {
                         if (user.marker != null) {
                             LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
                             user.marker.setPosition(p);
                             if (user.list.size() == 0) {
                                 user.list.add(p);
-                            } else if (user.list.get(user.list.size() - 1) != p) {
+                            } else if (user.list.get(user.list.size() - 1).latitude != p.latitude) {
                                 user.list.add(p);
+                                OverlayOptions mOverlayOptions = new PolylineOptions()
+                                        .width(30)
+                                        .color(0xAA59C9A5)
+                                        .points(user.list);
                                 if (user.list.size() == 2) {
-                                    OverlayOptions mOverlayOptions = new PolylineOptions()
-                                            .width(30)
-                                            .color(0xAA59C9A5)
-                                            .points(user.list);
-
-                                    polyLineList.remove(i);
-                                    polyLineList.add(i, mBaiduMap.addOverlay(mOverlayOptions));
+                                    System.out.println(user.list.size());
+                                    user.polyline = mBaiduMap.addOverlay(mOverlayOptions);
                                 } else {
-                                    OverlayOptions mOverlayOptions = new PolylineOptions()
-                                            .width(30)
-                                            .color(0xAA59C9A5)
-                                            .points(user.list);
-                                    polyLineList.get(i).remove();
-                                    polyLineList.remove(i);
-                                    polyLineList.add(i, mBaiduMap.addOverlay(mOverlayOptions));
+                                    System.out.println(user.list.size());
+                                    user.polyline.remove();
+                                    user.polyline = mBaiduMap.addOverlay(mOverlayOptions);
                                 }
                             }
                         }
@@ -625,21 +593,40 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         final MyApplication application = (MyApplication) getApplicationContext();
         if (application.getStartShare()) {
             LatLng point = new LatLng(0, 0);
+            LatLng p = new LatLng(application.getLa(),application.getLn());
             //构建Marker图标
             BitmapDescriptor bitmap = BitmapDescriptorFactory
                     .fromResource(R.drawable.circle2);
-            //构建MarkerOption，用于在地图上添加Marker
-            final OverlayOptions option = new MarkerOptions()
-                    .position(point) //必传参数
-                    .icon(bitmap) //必传参数
+
+            BitmapDescriptor loc = BitmapDescriptorFactory
+                    .fromResource(R.drawable.mark);
+
+            final OverlayOptions opt = new MarkerOptions()
+                    .position(p) //必传参数
+                    .icon(loc) //必传参数
                     //设置平贴地图，在地图中双指下拉查看效果
                     .flat(true);
+
+            mBaiduMap.addOverlay(opt);
+
             for (int i = 0; i < application.getPhones().size(); i++) {
-                users.get(i).phone = application.getPhones().get(i);
-                users.get(i).name = application.getNames().get(i);
+                //构建MarkerOption，用于在地图上添加Marker
+                final OverlayOptions option = new MarkerOptions()
+                        .position(point) //必传参数
+                        .icon(bitmap) //必传参数
+                        //设置平贴地图，在地图中双指下拉查看效果
+                        .flat(true)
+                        .title(String.valueOf(i));
+
+                User u = new User();
+                u.phone = application.getPhones().get(i);
+                u.name = application.getNames().get(i);
                 //在地图上添加Marker，并显示
-                users.get(i).marker = (Marker) mBaiduMap.addOverlay(option);
+                u.marker = (Marker) mBaiduMap.addOverlay(option);
+                u.list = new ArrayList<LatLng>();
+                users.add(u);
             }
+            startTimer();
             startTimer2();
             Toast.makeText(getApplicationContext(), "开始接受定位", Toast.LENGTH_SHORT).show();
         }
@@ -658,4 +645,5 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
     }
+
 }

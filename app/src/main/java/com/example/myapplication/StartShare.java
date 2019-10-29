@@ -82,8 +82,8 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     String phone = "";
     final Handler myHandler = new Handler();
     private List<Map<String, Object>> list;
-    private List<String> p;
-    private List<String> n;
+    private List<String> p = new ArrayList<String>();
+    private List<String> n = new ArrayList<String>();
 
 
 
