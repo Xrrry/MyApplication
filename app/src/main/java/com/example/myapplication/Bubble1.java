@@ -5,8 +5,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.xujiaji.happybubble.BubbleDialog;
+
+import org.w3c.dom.Text;
 
 
 public class Bubble1 extends BubbleDialog implements View.OnClickListener {
@@ -23,6 +26,16 @@ public class Bubble1 extends BubbleDialog implements View.OnClickListener {
         mViewHolder.btn9.setOnClickListener(this);
         mViewHolder.btn10.setOnClickListener(this);
 
+    }
+
+    public void setNameText(String s) {
+        TextView tv = findViewById(R.id.textView11);
+        tv.setText(s);
+    }
+
+    public void setPhoneText(String s) {
+        TextView tv = findViewById(R.id.textView12);
+        tv.setText(s);
     }
 
     @Override

@@ -115,6 +115,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private TextView n;
     boolean isOnOther = false;
 
+    @SuppressLint("HandlerLeak")
     public Handler handlerUI = new Handler() {
 
         public void handleMessage(Message msg) {
@@ -315,7 +316,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
             }
         });
-        Button bt11 = (Button) findViewById(R.id.button11);
+        final Button bt11 = (Button) findViewById(R.id.button11);
         bt11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -330,18 +331,28 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     mTimer2 = null;
                     mTimerTask2.cancel();
                     mTimerTask2 = null;
+                    application.setStartShare(false);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            bt11.setText("发起定位共享");
+                        }
+                    });
+                    for(int i=0;i<users.size();i++){
+                        users.get(i).marker.remove();
+                    }
                     Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        final BubbleDialog bd = new BubbleDialog(this)
-                .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
-                .setClickedView(bt6)
-                .setPosition(BubbleDialog.Position.TOP)
-                .setOffsetX(100)
-                .setOffsetY(250)
-                .calBar(true);
+//        final BubbleDialog bd = new BubbleDialog(this)
+//                .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
+//                .setClickedView(bt6)
+//                .setPosition(BubbleDialog.Position.TOP)
+//                .setOffsetX(100)
+//                .setOffsetY(250)
+//                .calBar(true);
         final Bubble1 codDialog = new Bubble1(this)
 //                .addContentView(LayoutInflater.from(this).inflate(R.layout.activity_bubble1, null))
                 .setPosition(BubbleDialog.Position.TOP)
@@ -385,16 +396,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 new Thread() {
                     @Override
                     public void run() {
-                        Message message = new Message();
-                        message.what = 1;
-                        handlerUI.sendMessage(message);
-//                        handler.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                n.setText(targetName);
-//                                p.setText(targetPhone);
-//                            }
-//                        });
+//                        Message message = new Message();
+//                        message.what = 1;
+//                        handlerUI.sendMessage(message);
+
+                        codDialog.setNameText(targetName);
+                        codDialog.setPhoneText(targetPhone);
                     }
                 }.start();
                 return false;
@@ -620,6 +627,13 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         mMapView.onResume();
         final MyApplication application = (MyApplication) getApplicationContext();
         if (application.getStartShare()) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Button stoptb = (Button) findViewById(R.id.button11);
+                    stoptb.setText("停止共享");
+                }
+            });
             if (!isOnOther) {
                 LatLng point = new LatLng(0, 0);
                 LatLng p = new LatLng(application.getLa(), application.getLn());
