@@ -7,10 +7,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import android.Manifest;
-import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -35,14 +31,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -54,8 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//调用百度API选择一个位置之后，我们需要返回一个经纬度的地理坐标，我们可以通过方法
-//startActivityForResult(Intent intent,int RequestCode)来实现
+
 public class StartShare extends AppCompatActivity implements View.OnClickListener {
     private ViewPager viewPager;
     private ArrayList<View> pageView;   //一个用来存放布局的ArrayList
@@ -84,7 +77,8 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     private List<Map<String, Object>> list;
     private List<String> p = new ArrayList<String>();
     private List<String> n = new ArrayList<String>();
-
+    private Handler mhandler = new Handler();
+    Button bt_choose;
 
 
     @Override
@@ -133,8 +127,16 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
         LayoutInflater inflater =getLayoutInflater();
         View view1 = inflater.inflate(R.layout.location_share,null);
         View view2 = inflater.inflate(R.layout.destination,null);
+        View view3 = inflater.inflate(R.layout.list_item,null);
         contacts = (ListView) view1.findViewById(R.id.contacts_view);
         contacts1 = (ListView) view2.findViewById(R.id.contacts_view1);
+//        CheckBox cb = (CheckBox) view3.findViewById(R.id.checkbox);
+//        cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                System.out.println(123123);
+//            }
+//        });
         list = new ArrayList<Map<String, Object>>();
 
         new Thread() {
@@ -176,7 +178,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
 
         Button btn_share = view1.findViewById(R.id.share);
         Button btn_destine = view2.findViewById(R.id.confirm);
-        Button bt_choose = view2.findViewById(R.id.choosepoint);
+        bt_choose = view2.findViewById(R.id.choosepoint);
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -218,7 +220,6 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 parent.getAdapter().getItem(position);
-                View v = view;
                 CheckBox checkBox = view.findViewById(R.id.checkbox);
                 if(checkBox.isSelected()){
                     checkBox.setSelected(false);
@@ -318,6 +319,12 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
         final MyApplication application = (MyApplication) getApplicationContext();
         if(application.getLa()>1e-3) {
             Toast.makeText(getApplicationContext(), "已选取地址", Toast.LENGTH_SHORT).show();
+            mhandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    bt_choose.setText("已选点");
+                }
+            });
         }
     }
 
@@ -374,6 +381,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 break;
         }
     }
+
 
     final Runnable mUpdateResults = new Runnable() {
         public void run() {

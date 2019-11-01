@@ -327,11 +327,14 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 //                    startActivity(i2);
                 } else {
                     isOnReceive = false;
+                    mTimer.cancel();
+                    mTimer = null;
+                    mTimerTask.cancel();
+                    mTimerTask = null;
                     mTimer2.cancel();
                     mTimer2 = null;
                     mTimerTask2.cancel();
                     mTimerTask2 = null;
-                    application.setStartShare(false);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -340,7 +343,13 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     });
                     for(int i=0;i<users.size();i++){
                         users.get(i).marker.remove();
+                        users.get(i).polyline.remove();
                     }
+                    application.setStartShare(false);
+                    application.setNames(null);
+                    application.setPhones(null);
+                    application.setLa(0);
+                    application.setLn(0);
                     Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
                 }
             }

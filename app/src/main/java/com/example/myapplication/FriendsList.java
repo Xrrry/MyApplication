@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -33,10 +34,6 @@ public class FriendsList extends AppCompatActivity {
     private SimpleAdapter adapter;
     private List<Map<String, Object>> list;
     private Map<String, Object> map;
-    private String[] names = {};
-    private String[] number = {};
-    private Button button_1;
-    private Button button_2;
     Connection c = null;
     PreparedStatement s = null;
     ResultSet rs = null;
@@ -115,9 +112,9 @@ public class FriendsList extends AppCompatActivity {
                 }
             }
         }.start();
-        button_1 = (Button) this.findViewById(R.id.Image_button_1);
-        button_2 = (Button) this.findViewById(R.id.add_button);
-        button_1.setOnClickListener(new View.OnClickListener()//请求按钮跳转
+        Button bt1 = (Button) this.findViewById(R.id.friendmessage);
+        Button bt2 = (Button) this.findViewById(R.id.addnew);
+        bt1.setOnClickListener(new View.OnClickListener()//请求按钮跳转
         {
             @Override
             public void onClick(View v) {
@@ -125,12 +122,12 @@ public class FriendsList extends AppCompatActivity {
                 //startActivity(intent);
             }
         });
-        button_2.setOnClickListener(new View.OnClickListener()//添加按钮跳转
+        bt2.setOnClickListener(new View.OnClickListener()//添加按钮跳转
         {
             @Override
             public void onClick(View v) {
-                //Intent intent=new Intent(MainActivity.this,*.class)
-                //startActivity(intent);
+                Intent intent=new Intent(FriendsList.this,AddFriend.class);
+                startActivity(intent);
             }
         });
     }

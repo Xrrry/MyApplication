@@ -16,7 +16,7 @@
         >
 
         <Button
-            android:id="@+id/Image_button_1"
+            android:id="@+id/friendmessage"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentLeft="true"
@@ -26,7 +26,7 @@
              />
 
         <Button
-            android:id="@+id/add_button"
+            android:id="@+id/addnew"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
