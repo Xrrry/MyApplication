@@ -168,7 +168,6 @@ public class AddFriend<adapter> extends AppCompatActivity {
                     String tels = cursor.getString(cursor.getColumnIndex(
                             ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-
                     map = new HashMap<String, Object>();
                     map.put("name", names);
                     map.put("tel", tels);

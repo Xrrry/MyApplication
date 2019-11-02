@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,7 +19,6 @@ import android.os.Handler;
 import android.widget.Button;
 import android.view.*;
 import android.widget.*;
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -118,8 +115,8 @@ public class FriendsList extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                //Intent intent=new Intent(MainActivity.this,*.class);
-                //startActivity(intent);
+                Intent intent=new Intent(FriendsList.this, NewFMessage.class);
+                startActivity(intent);
             }
         });
         bt2.setOnClickListener(new View.OnClickListener()//添加按钮跳转

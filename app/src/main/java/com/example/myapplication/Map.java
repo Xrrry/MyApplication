@@ -240,12 +240,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(Map.this, Friend.class);
-//                startActivity(i);
-
-//                Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
-//                sendIntent.putExtra("sms_body", "test");
-//                startActivity(sendIntent);
                 Intent i = new Intent(Map.this, FriendsList.class);
                 startActivity(i);
             }
@@ -381,7 +375,11 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + targetPhone));//跳转到拨号界面，同时传递电话号码
                     startActivity(sendIntent);
                 } else {
-                    System.out.println(str);
+                    isOnOther = true;
+                    Intent i1 = new Intent();
+                    String latlng = targetLa + "," + targetLn;
+                    i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName +"|latlng:" + latlng + "&coord_type=bd09ll&mode=walking&src=andr.baidu.openAPIdemo"));
+                    startActivity(i1);
                 }
             }
         });
