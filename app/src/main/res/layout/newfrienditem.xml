@@ -33,12 +33,12 @@
     </LinearLayout>
     <Button
         android:id="@+id/button"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
-        android:layout_width="60dp"
-        android:layout_height="25dp"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
         android:background="@drawable/bt_shape3"
         android:textColor="#ffffff"
         android:text="添加"
-        android:textSize="16dp"/>
+        android:textSize="17dp"/>
 </LinearLayout>

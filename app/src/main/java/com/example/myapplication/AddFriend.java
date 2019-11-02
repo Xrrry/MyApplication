@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,11 @@ import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +38,17 @@ import java.util.Map;
 public class AddFriend<adapter> extends AppCompatActivity {
     MyAdapter adapter;
     ArrayList<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-    //private int flag;
     public static String name[] = new String[1000];
     public static String tel[] = new String[1000];
     Map<String, Object> map;
     ListView listview;
+    Connection c = null;
+    PreparedStatement s = null;
+    ResultSet rs = null;
+    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
+    private static final String USERNAME = "root";
+    private static final String PWD = "xiaoruoruo1999";
+    Handler handler = new Handler();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,8 +100,7 @@ public class AddFriend<adapter> extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText et = (EditText) findViewById(R.id.editText);
-                String str = et.getText().toString();
-//                int in =Integer.parseInt(str);
+                final String str = et.getText().toString();
                 if (str.equals("")) {
                     Toast.makeText(AddFriend.this, "手机号码格式错误", Toast.LENGTH_SHORT).show();
                     return;
@@ -100,12 +111,35 @@ public class AddFriend<adapter> extends AppCompatActivity {
                     et.setText(null);
                     return;
                 } else {
-                    //int in;
-                    Toast.makeText(AddFriend.this, "已向发送请求", Toast.LENGTH_SHORT).show();
-                    //System.out.println(str);
-                    //in =Integer.parseInt(str);
-                    //
-                    System.out.println(str);
+                    final MyApplication application = (MyApplication) getApplicationContext();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            try {
+                                Class.forName("com.mysql.jdbc.Driver");
+                                c = DriverManager.getConnection(URL, USERNAME, PWD);
+                                String values = "(" + application.getPhone() + "," + str + "," + "1" + ")";
+                                String sql = "INSERT INTO newfriends (Phone1, Phone2, Status) VALUES " + values;
+                                s = c.prepareStatement(sql);
+                                s.executeUpdate();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (rs != null) rs.close();
+                                    if (s != null) s.close();
+                                    if (c != null) c.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }.start();
+                    Toast.makeText(getApplicationContext(), "已发送请求", Toast.LENGTH_SHORT).show();
                     et.setText(null);
                 }
 
@@ -138,16 +172,10 @@ public class AddFriend<adapter> extends AppCompatActivity {
                     map = new HashMap<String, Object>();
                     map.put("name", names);
                     map.put("tel", tels);
-                    name[i]=names;
-                    tel[i]=tels;
+                    name[i] = names;
+                    tel[i] = tels;
                     i++;
-                    if (isfriend()) {
-
-                        map.put("button", "添加");
-                    } else {
-                        map.put("button", "已添加");
-
-                    }
+                    map.put("button", "添加");
                     list.add(map);
                 }
                 //刷新
@@ -161,11 +189,6 @@ public class AddFriend<adapter> extends AppCompatActivity {
             }
         }
         return list;
-    }
-
-    private boolean isfriend() {
-        if (true) return true;
-        else return false;
     }
 
     //回调方法，无论哪种结果，最终都会回调该方法，之后在判断用户是否授权，
@@ -202,18 +225,47 @@ public class AddFriend<adapter> extends AppCompatActivity {
             View view = super.getView(i, convertView, viewGroup);
             final Button btn = (Button) view.findViewById(R.id.button);
             btn.setTag(i);//设置标签
-            int IN;
             btn.setOnClickListener(new android.view.View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    int a=(Integer) v.getTag();
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            btn.setText("已发送");
+                        }
+                    });
+                    final int a = (Integer) v.getTag();
+                    final MyApplication application = (MyApplication) getApplicationContext();
                     {
-//                        int IN;
-                        Toast.makeText(getApplicationContext(), "已发送请求" , Toast.LENGTH_SHORT).show();
-                        System.out.println(tel[a]);
-//                        IN =Integer.parseInt(tel[a]);
-//                        System.out.println(IN);
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Class.forName("com.mysql.jdbc.Driver");
+                                    c = DriverManager.getConnection(URL, USERNAME, PWD);
+                                    String values = "(" + application.getPhone() + "," + tel[a].replaceAll(" ","") + "," + "1" + ")";
+                                    String sql = "INSERT INTO newfriends (Phone1, Phone2, Status) VALUES " + values;
+                                    s = c.prepareStatement(sql);
+                                    s.executeUpdate();
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    try {
+                                        if (rs != null) rs.close();
+                                        if (s != null) s.close();
+                                        if (c != null) c.close();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.start();
+                        Toast.makeText(getApplicationContext(), "已发送请求", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

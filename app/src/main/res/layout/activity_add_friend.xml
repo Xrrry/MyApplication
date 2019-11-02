@@ -39,13 +39,14 @@
 
         <Button
             android:id="@+id/search_button"
-            android:layout_width="100dp"
-            android:layout_height="35dp"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
             android:layout_gravity="end"
             android:background="@drawable/bt_shape1"
             android:textColor="#ffffff"
             android:textSize="17sp"
-            android:text="搜素" />
+            android:layout_marginLeft="4dp"
+            android:text="添加" />
     </TableRow>
 
     <ListView

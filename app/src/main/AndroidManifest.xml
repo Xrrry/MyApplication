@@ -23,7 +23,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".AddFriend"></activity>
-        <activity android:name=".Changetest" />
         <activity android:name=".StartShare" />
         <activity android:name=".EditName" />
         <activity android:name=".Bubble1" />
