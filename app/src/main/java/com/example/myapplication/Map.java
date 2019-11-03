@@ -88,13 +88,16 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     PreparedStatement s = null;
     PreparedStatement s2 = null;
     ResultSet rs = null;
+    ResultSet rs2 = null;
     private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     private Timer mTimer = null;
     private Timer mTimer2 = null;
+    private Timer mTimer3 = null;
     private TimerTask mTimerTask = null;
     private TimerTask mTimerTask2 = null;
+    private TimerTask mTimerTask3 = null;
     String phone = "";
     String name = "";
     String la = null;
@@ -109,6 +112,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     public static Map instance;
     List<User> users = new ArrayList<User>();
+    List<String> nowPhones = new ArrayList<String>();
     final Handler handler = new Handler();
     private View v;
     private TextView p;
@@ -549,6 +553,75 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         }
     }
 
+    private void startTimer3() {
+        if (mTimer3 == null) {
+            mTimer3 = new Timer();
+        }
+
+        if (mTimerTask3 == null) {
+            mTimerTask3 = new TimerTask() {
+                @Override
+                public void run() {
+                    MyThread3 t3 = new MyThread3();
+                    t3.run();
+                }
+            };
+        }
+
+        if (mTimer3 != null && mTimerTask3 != null)
+            mTimer3.schedule(mTimerTask3, 0, 5000);
+    }
+
+    class MyThread3 implements Runnable {
+        final MyApplication application = (MyApplication) getApplicationContext();
+        public void run() {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                c = DriverManager.getConnection(URL, USERNAME, PWD);
+                String sql = "SELECT Name,Phone from sharegroups where shareID=" + application.getShareID() + " and Status='1' order by ID desc";
+                s = c.prepareStatement(sql);
+                rs2 = s.executeQuery();
+                LatLng point = new LatLng(0, 0);
+                BitmapDescriptor bitmap = BitmapDescriptorFactory
+                        .fromResource(R.drawable.circle2);
+                int i=0;
+                while(rs2.next()) {
+                    if(!nowPhones.contains(rs.getString("Phone"))) {
+                        final OverlayOptions option = new MarkerOptions()
+                                .position(point) //必传参数
+                                .icon(bitmap) //必传参数
+                                //设置平贴地图，在地图中双指下拉查看效果
+                                .flat(true)
+                                .title(String.valueOf(i));
+                        User tempU = new User();
+                        tempU.name = rs2.getString("Name");
+                        tempU.phone = rs2.getString("Phone");
+                        //在地图上添加Marker，并显示
+                        tempU.marker = (Marker) mBaiduMap.addOverlay(option);
+                        tempU.list = new ArrayList<LatLng>();
+                        users.add(tempU);
+                        nowPhones.add(rs.getString("Phone"));
+                    }
+                    i++;
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (rs != null) rs.close();
+                    if (s != null) s.close();
+                    if (c != null) c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -644,25 +717,26 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
                 mBaiduMap.addOverlay(opt);
 
-                for (int i = 0; i < application.getPhones().size(); i++) {
-                    //构建MarkerOption，用于在地图上添加Marker
-                    final OverlayOptions option = new MarkerOptions()
-                            .position(point) //必传参数
-                            .icon(bitmap) //必传参数
-                            //设置平贴地图，在地图中双指下拉查看效果
-                            .flat(true)
-                            .title(String.valueOf(i));
-
-                    User u = new User();
-                    u.phone = application.getPhones().get(i);
-                    u.name = application.getNames().get(i);
-                    //在地图上添加Marker，并显示
-                    u.marker = (Marker) mBaiduMap.addOverlay(option);
-                    u.list = new ArrayList<LatLng>();
-                    users.add(u);
-                }
+//                for (int i = 0; i < application.getPhones().size(); i++) {
+//                    //构建MarkerOption，用于在地图上添加Marker
+//                    final OverlayOptions option = new MarkerOptions()
+//                            .position(point) //必传参数
+//                            .icon(bitmap) //必传参数
+//                            //设置平贴地图，在地图中双指下拉查看效果
+//                            .flat(true)
+//                            .title(String.valueOf(i));
+//
+//                    User u = new User();
+//                    u.phone = application.getPhones().get(i);
+//                    u.name = application.getNames().get(i);
+//                    //在地图上添加Marker，并显示
+//                    u.marker = (Marker) mBaiduMap.addOverlay(option);
+//                    u.list = new ArrayList<LatLng>();
+//                    users.add(u);
+//                }
                 startTimer();
                 startTimer2();
+                startTimer3();
                 Toast.makeText(getApplicationContext(), "开始接受定位", Toast.LENGTH_SHORT).show();
             }
             else {

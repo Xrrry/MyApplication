@@ -149,33 +149,7 @@ public class NewLMessage extends AppCompatActivity {
                     final int a = (Integer) v.getTag();
                     final MyApplication application = (MyApplication) getApplicationContext();
                     {
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Class.forName("com.mysql.jdbc.Driver");
-                                    c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                    String values = "(" + application.getPhone() + "," + tel[a].replaceAll(" ","") + "),(" + tel[a].replaceAll(" ","") + "," + application.getPhone() + ")";
-                                    String sql = "INSERT INTO relationship (Phone1, Phone2) VALUES " + values;
-                                    s = c.prepareStatement(sql);
-                                    s.executeUpdate();
-                                } catch (ClassNotFoundException e) {
-                                    e.printStackTrace();
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    try {
-                                        if (rs != null) rs.close();
-                                        if (s != null) s.close();
-                                        if (c != null) c.close();
-                                    } catch (SQLException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }.start();
+
                         new Thread() {
                             @Override
                             public void run() {
@@ -193,8 +167,35 @@ public class NewLMessage extends AppCompatActivity {
                                     e.printStackTrace();
                                 } finally {
                                     try {
-                                        if (rs != null) rs.close();
                                         if (s2 != null) s2.close();
+                                        if (c != null) c.close();
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.start();
+
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Class.forName("com.mysql.jdbc.Driver");
+                                    c = DriverManager.getConnection(URL, USERNAME, PWD);
+                                    String sql = "UPDATE sharegroups set Status='1' where Phone=" + phone + " and ShareID=" + application.getShareID();
+                                    s = c.prepareStatement(sql);
+                                    s.executeUpdate();
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    application.setStartShare(true);
+                                    finish();
+                                    try {
+                                        if (s != null) s.close();
                                         if (c != null) c.close();
                                     } catch (SQLException e) {
                                         e.printStackTrace();
@@ -229,8 +230,8 @@ public class NewLMessage extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 } finally {
+                                    finish();
                                     try {
-                                        if (rs != null) rs.close();
                                         if (s2 != null) s2.close();
                                         if (c != null) c.close();
                                     } catch (SQLException e) {

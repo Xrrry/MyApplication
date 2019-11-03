@@ -201,6 +201,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 application.setNames(n);
                 time = dateFormat.format(date);
                 Stime = phone + time.replaceAll(" ","");
+                application.setShareID(Stime);
                 new Thread() {
                     @Override
                     public void run() {
@@ -277,6 +278,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 application.setStartShare(true);
                 application.setPhones(p);
                 application.setNames(n);
+                application.setShareID(Stime);
                 new Thread() {
                     @Override
                     public void run() {

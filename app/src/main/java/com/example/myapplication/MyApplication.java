@@ -19,6 +19,7 @@ public class MyApplication extends Application {
     private List<String> phones;
     private List<String> names;
     private boolean isStartShare = false;
+    private String ShareID = "";
     @Override
     public void onCreate() {
         super.onCreate();
@@ -72,6 +73,12 @@ public class MyApplication extends Application {
     }
     public void setStartShare(boolean i) {
         this.isStartShare = i;
+    }
+    public String getShareID() {
+        return getShareID();
+    }
+    public void setShareID(String i) {
+        this.ShareID = i;
     }
 
 }
