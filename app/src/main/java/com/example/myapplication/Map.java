@@ -249,24 +249,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent i = new Intent(Map.this, Friend.class);
-//                startActivity(i);
+                Intent i = new Intent(Map.this, NewLMessage.class);
+                startActivity(i);
 
-//                Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "17638591897"));//跳转到拨号界面，同时传递电话号码
-//                startActivity(dialIntent);
-                if (isOnSend == false) {
-                    isOnSend = true;
-                    startTimer();
-                    Toast.makeText(getApplicationContext(), "开始发送定位", Toast.LENGTH_SHORT).show();
-                } else {
-                    isOnSend = false;
-                    mTimer.cancel();
-                    mTimer = null;
-                    mTimerTask.cancel();
-                    mTimerTask = null;
-                    application.setStartShare(false);
-                    Toast.makeText(getApplicationContext(), "停止发送定位", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 

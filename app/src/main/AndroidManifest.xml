@@ -22,7 +22,8 @@
         android:roundIcon="@mipmap/location_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".NewFMessage"></activity>
+        <activity android:name=".NewLMessage"></activity>
+        <activity android:name=".NewFMessage" />
         <activity android:name=".AddFriend" />
         <activity android:name=".StartShare" />
         <activity android:name=".EditName" />

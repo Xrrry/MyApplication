@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NewFMessage extends AppCompatActivity {
-    private ListView listview_2;
+public class NewLMessage extends AppCompatActivity {
+    private ListView listview_3;
     MyAdapter myadapter;
     private List<java.util.Map<String, Object>> list;
     private Map<String, Object> map;
@@ -42,7 +42,6 @@ public class NewFMessage extends AppCompatActivity {
     final Handler myHandler = new Handler();
     String phone = "";
     public static String tel[] = new String[1000];
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +70,10 @@ public class NewFMessage extends AppCompatActivity {
 
             }
         }
-        setContentView(R.layout.activity_new_fmessage);
 
-        listview_2 = (ListView) this.findViewById(R.id.Listview_2);
+        setContentView(R.layout.activity_new_lmessage);
+
+        listview_3 = (ListView) this.findViewById(R.id.Listview_2);
         list = new ArrayList<Map<String, Object>>();
         final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
@@ -83,7 +83,7 @@ public class NewFMessage extends AppCompatActivity {
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                    String sql = "select Phone1,Name from newfriends,user where newfriends.Phone2='" + phone + "' and newfriends.Phone1 = user.Phone order by newfriends.ID desc";
+                    String sql = "select Phone1,Name,ShareID from newshares,user where newshares.Phone2='" + phone + "' and newshares.Phone1 = user.Phone order by newshares.ID desc";
                     s = c.prepareStatement(sql);
                     rs = s.executeQuery();
                     int i=0;
@@ -119,8 +119,8 @@ public class NewFMessage extends AppCompatActivity {
         public void run() {
             String[] form = {"name", "tel"};
             int[] to = {R.id.name, R.id.tel};
-            myadapter = new MyAdapter(getApplicationContext(), list, R.layout.newshareitem, form, to);
-            listview_2.setAdapter(myadapter);
+            myadapter = new NewLMessage.MyAdapter(getApplicationContext(), list, R.layout.newshareitem, form, to);
+            listview_3.setAdapter(myadapter);
         }
     };
 
@@ -134,7 +134,6 @@ public class NewFMessage extends AppCompatActivity {
                          int[] to) {
             super(context, data, resource, from, to);
             this.context = context;
-            //this.mInflater = LayoutInflater.from(context);
         }
 
         @Override
@@ -143,7 +142,6 @@ public class NewFMessage extends AppCompatActivity {
             final Button bt1 = (Button) view.findViewById(R.id.agree);
             final Button bt2 = (Button) view.findViewById(R.id.refuse);
             bt1.setTag(i);//设置标签
-            bt2.setTag(i);
             bt1.setOnClickListener(new android.view.View.OnClickListener() {
 
                 @Override

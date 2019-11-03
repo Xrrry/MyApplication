@@ -44,7 +44,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,17 +70,24 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     private HashMap<Integer,Boolean> hashMap1;
     Connection c = null;
     PreparedStatement s = null;
+    Connection c1 = null;
+    PreparedStatement s1 = null;
     ResultSet rs = null;
     private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
     String phone = "";
+    String name = "";
     final Handler myHandler = new Handler();
+    Date date = new Date();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private List<Map<String, Object>> list;
     private List<String> p = new ArrayList<String>();
     private List<String> n = new ArrayList<String>();
     private Handler mhandler = new Handler();
     Button bt_choose;
+    String time = "";
+    String Stime = "";
 
 
     @Override
@@ -113,6 +122,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
 
         final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
+        name = application.getName();
 
         hashMap = new HashMap<Integer, Boolean>();
         for(int i=0;i<100;i++){
@@ -166,8 +176,6 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 } finally {
                     try {
                         if (rs != null) rs.close();
-                        if (s != null) s.close();
-                        if (c != null) c.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -191,7 +199,70 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 application.setStartShare(true);
                 application.setPhones(p);
                 application.setNames(n);
-                finish();
+                time = dateFormat.format(date);
+                Stime = phone + time.replaceAll(" ","");
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            c = DriverManager.getConnection(URL, USERNAME, PWD);
+                            String values = "('" + phone + "','" + name + "','" + Stime + "'," + "'0'" + ")";
+                            for(int i=0;i<p.size();i++) {
+                                values = values + ",('" + p.get(i) + "','" + n.get(i) + "','" + Stime + "'," + "'0'" + ")";
+                            }
+                            System.out.println(values);
+                            String sql = "INSERT INTO sharegroups (Phone, Name, ShareID, Status) VALUES " + values;
+                            s = c.prepareStatement(sql);
+                            s.executeUpdate();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (s != null) s.close();
+                                if (c != null) c.close();
+                                finish();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            c1 = DriverManager.getConnection(URL, USERNAME, PWD);
+                            String values = "('" + phone + "','" + p.get(0) + "','" + Stime + "','" + time + "')";
+                            for(int j=1;j<p.size();j++) {
+                                values = values + ",('" + phone + "','" + p.get(j) + "','" + Stime + "','" + time + "')";
+                            }
+                            System.out.println(values);
+                            String sql = "INSERT INTO newshares (Phone1, Phone2, ShareID, ShareTime) VALUES " + values;
+                            s1 = c1.prepareStatement(sql);
+                            s1.executeUpdate();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (s1 != null) s1.close();
+                                if (c1 != null) c1.close();
+                                finish();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
             }
         });
         btn_destine.setOnClickListener(new View.OnClickListener() {
@@ -206,7 +277,72 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                 application.setStartShare(true);
                 application.setPhones(p);
                 application.setNames(n);
-                finish();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            c = DriverManager.getConnection(URL, USERNAME, PWD);
+                            String time = dateFormat.format(date);
+                            String Stime = phone + time;
+                            Stime = Stime.replaceAll(" ","");
+                            String values = "('" + phone + "','" + name + "','" + Stime + "'," + "'0'" + ")";
+                            for(int i=0;i<p.size();i++) {
+                                values = values + ",('" + p.get(i) + "','" + n.get(i) + "','" + Stime + "'," + "'0'" + ")";
+                            }
+                            System.out.println(values);
+                            String sql = "INSERT INTO sharegroups (Phone, Name, ShareID, Status) VALUES " + values;
+                            s = c.prepareStatement(sql);
+                            s.executeUpdate();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (rs != null) rs.close();
+                                if (s != null) s.close();
+                                if (c != null) c.close();
+                                finish();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            c1 = DriverManager.getConnection(URL, USERNAME, PWD);
+                            String values = "('" + phone + "','" + p.get(0) + "','" + Stime + "','" + time + "')";
+                            for(int j=1;j<p.size();j++) {
+                                values = values + ",('" + phone + "','" + p.get(j) + "','" + Stime + "','" + time + "')";
+                            }
+                            System.out.println(values);
+                            String sql = "INSERT INTO newshares (Phone1, Phone2, ShareID, ShareTime) VALUES " + values;
+                            s1 = c1.prepareStatement(sql);
+                            s1.executeUpdate();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (s1 != null) s1.close();
+                                if (c1 != null) c1.close();
+                                finish();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
             }
         });
         bt_choose.setOnClickListener(new View.OnClickListener() {
