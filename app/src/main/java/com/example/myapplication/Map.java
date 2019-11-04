@@ -86,9 +86,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     LatLng ll = new LatLng(0,0);
     Connection c = null;
     PreparedStatement s = null;
-    PreparedStatement s2 = null;
     ResultSet rs = null;
-    ResultSet rs2 = null;
     private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
@@ -199,6 +197,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         new Thread() {
             @Override
             public void run() {
+                Connection c = null;
+                PreparedStatement s = null;
+                ResultSet rs = null;
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     c = DriverManager.getConnection(URL, USERNAME, PWD);
@@ -316,8 +317,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     mTimerTask = null;
                     mTimer2.cancel();
                     mTimer2 = null;
+                    mTimer3.cancel();
+                    mTimer3 = null;
                     mTimerTask2.cancel();
                     mTimerTask2 = null;
+                    mTimerTask3.cancel();
+                    mTimerTask3 = null;
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -326,11 +331,13 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     });
                     for(int i=0;i<users.size();i++){
                         users.get(i).marker.remove();
-                        users.get(i).polyline.remove();
+                        if (users.get(i).polyline != null) {
+                            users.get(i).polyline.remove();
+                        }
                     }
                     application.setStartShare(false);
-                    application.setNames(null);
-                    application.setPhones(null);
+//                    application.setNames(null);
+//                    application.setPhones(null);
                     application.setLa(0);
                     application.setLn(0);
                     Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
@@ -470,7 +477,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (rs != null) rs.close();
                     if (s != null) s.close();
                     if (c != null) c.close();
                 } catch (SQLException e) {
@@ -502,6 +508,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
     class MyThread2 implements Runnable {
         public void run() {
+            Connection c = null;
+            PreparedStatement s = null;
+            ResultSet rs = null;
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
@@ -509,8 +518,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
                     String sql2 = "select * from location where Phone = '" + user.phone + "' order by CTime desc limit 1";
-                    s2 = c.prepareStatement(sql2);
-                    rs = s2.executeQuery();
+                    s = c.prepareStatement(sql2);
+                    rs = s.executeQuery();
                     if (rs.next()) {
                         if (user.marker != null) {
                             LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
@@ -575,17 +584,20 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     class MyThread3 implements Runnable {
         final MyApplication application = (MyApplication) getApplicationContext();
         public void run() {
+            Connection c = null;
+            PreparedStatement s = null;
+            ResultSet rs = null;
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "SELECT Name,Phone from sharegroups where shareID=" + application.getShareID() + " and Status='1' order by ID desc";
+                String sql = "SELECT Name,Phone from sharegroups where shareID='" + application.getShareID() + "' and Status='1' order by ID desc";
                 s = c.prepareStatement(sql);
-                rs2 = s.executeQuery();
+                rs = s.executeQuery();
                 LatLng point = new LatLng(0, 0);
                 BitmapDescriptor bitmap = BitmapDescriptorFactory
                         .fromResource(R.drawable.circle2);
                 int i=0;
-                while(rs2.next()) {
+                while(rs.next()) {
                     if(!nowPhones.contains(rs.getString("Phone"))) {
                         final OverlayOptions option = new MarkerOptions()
                                 .position(point) //必传参数
@@ -594,8 +606,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                                 .flat(true)
                                 .title(String.valueOf(i));
                         User tempU = new User();
-                        tempU.name = rs2.getString("Name");
-                        tempU.phone = rs2.getString("Phone");
+                        tempU.name = rs.getString("Name");
+                        tempU.phone = rs.getString("Phone");
                         //在地图上添加Marker，并显示
                         tempU.marker = (Marker) mBaiduMap.addOverlay(option);
                         tempU.list = new ArrayList<LatLng>();
@@ -612,7 +624,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (rs != null) rs.close();
                     if (s != null) s.close();
                     if (c != null) c.close();
                 } catch (SQLException e) {

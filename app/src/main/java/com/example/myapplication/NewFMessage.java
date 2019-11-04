@@ -13,7 +13,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -42,6 +45,8 @@ public class NewFMessage extends AppCompatActivity {
     final Handler myHandler = new Handler();
     String phone = "";
     public static String tel[] = new String[1000];
+    Handler handler = new Handler();
+    TextView noneTv = null;
 
 
     @Override
@@ -74,6 +79,7 @@ public class NewFMessage extends AppCompatActivity {
         setContentView(R.layout.activity_new_fmessage);
 
         listview_2 = (ListView) this.findViewById(R.id.Listview_2);
+        noneTv = (TextView) this.findViewById(R.id.NoneView);
         list = new ArrayList<Map<String, Object>>();
         final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
@@ -95,7 +101,17 @@ public class NewFMessage extends AppCompatActivity {
                         i++;
                         list.add(map);
                     }
-                    myHandler.post(mUpdateResults);
+                    if(i>0) {
+                        myHandler.post(mUpdateResults);
+                    }
+                    else {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                noneTv.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {

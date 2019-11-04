@@ -13,6 +13,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Field;
@@ -42,6 +43,9 @@ public class NewLMessage extends AppCompatActivity {
     final Handler myHandler = new Handler();
     String phone = "";
     public static String tel[] = new String[1000];
+    public static String id[] = new String[1000];
+    Handler handler = new Handler();
+    TextView noneTv = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,7 @@ public class NewLMessage extends AppCompatActivity {
         setContentView(R.layout.activity_new_lmessage);
 
         listview_3 = (ListView) this.findViewById(R.id.Listview_2);
+        noneTv = (TextView) this.findViewById(R.id.NoneView);
         list = new ArrayList<Map<String, Object>>();
         final MyApplication application = (MyApplication) getApplicationContext();
         phone = application.getPhone();
@@ -92,10 +97,21 @@ public class NewLMessage extends AppCompatActivity {
                         map.put("name", rs.getString("Name"));
                         map.put("tel", rs.getString("Phone1"));
                         tel[i] = rs.getString("Phone1");
+                        id[i] = rs.getString("ShareID");
                         i++;
                         list.add(map);
                     }
-                    myHandler.post(mUpdateResults);
+                    if(i>0) {
+                        myHandler.post(mUpdateResults);
+                    }
+                    else {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                noneTv.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {
@@ -156,7 +172,7 @@ public class NewLMessage extends AppCompatActivity {
                                 try {
                                     Class.forName("com.mysql.jdbc.Driver");
                                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                    String sql2 = "delete from newfriends where Phone1='" + tel[a].replaceAll(" ","") + "' and Phone2='" + application.getPhone() + "'";
+                                    String sql2 = "delete from newshares where Phone1='" + tel[a].replaceAll(" ","") + "' and Phone2='" + application.getPhone() + "' and ShareID='" + id[a] + "'";
                                     s2 = c.prepareStatement(sql2);
                                     s2.executeUpdate();
                                 } catch (ClassNotFoundException e) {
@@ -182,7 +198,7 @@ public class NewLMessage extends AppCompatActivity {
                                 try {
                                     Class.forName("com.mysql.jdbc.Driver");
                                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                    String sql = "UPDATE sharegroups set Status='1' where Phone=" + phone + " and ShareID=" + application.getShareID();
+                                    String sql = "UPDATE sharegroups set Status='1' where Phone=" + phone + " and ShareID='" + id[i] + "'";
                                     s = c.prepareStatement(sql);
                                     s.executeUpdate();
                                 } catch (ClassNotFoundException e) {
@@ -193,6 +209,7 @@ public class NewLMessage extends AppCompatActivity {
                                     e.printStackTrace();
                                 } finally {
                                     application.setStartShare(true);
+                                    application.setShareID(id[i]);
                                     finish();
                                     try {
                                         if (s != null) s.close();
@@ -220,7 +237,7 @@ public class NewLMessage extends AppCompatActivity {
                                 try {
                                     Class.forName("com.mysql.jdbc.Driver");
                                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                    String sql2 = "delete from newfriends where Phone1='" + tel[a].replaceAll(" ","") + "' and Phone2='" + application.getPhone() + "'";
+                                    String sql2 = "delete from newshares where Phone1='" + tel[a].replaceAll(" ","") + "' and Phone2='" + application.getPhone() + "' and ShareID='" + id[a] + "'";
                                     s2 = c.prepareStatement(sql2);
                                     s2.executeUpdate();
                                 } catch (ClassNotFoundException e) {

@@ -75,7 +75,7 @@ public class MyApplication extends Application {
         this.isStartShare = i;
     }
     public String getShareID() {
-        return getShareID();
+        return ShareID;
     }
     public void setShareID(String i) {
         this.ShareID = i;
