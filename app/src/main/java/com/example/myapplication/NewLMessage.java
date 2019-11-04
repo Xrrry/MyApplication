@@ -23,7 +23,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +48,21 @@ public class NewLMessage extends AppCompatActivity {
     public static String id[] = new String[1000];
     Handler handler = new Handler();
     TextView noneTv = null;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    String time = "";
+
+
+    private boolean isvalid(String a) {
+        Date date = new Date();
+        time = dateFormat.format(date);
+        if (a.substring(0,14).equals(time.substring(0,14))) {
+            if(Integer.valueOf(time.substring(14,16))-Integer.valueOf(a.substring(14,16))<=1) {
+                System.out.println(Integer.valueOf(a.substring(14,16)));
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,18 +105,20 @@ public class NewLMessage extends AppCompatActivity {
                 try {
                     Class.forName("com.mysql.jdbc.Driver");
                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                    String sql = "select Phone1,Name,ShareID from newshares,user where newshares.Phone2='" + phone + "' and newshares.Phone1 = user.Phone order by newshares.ID desc";
+                    String sql = "select Phone1,Name,ShareID,ShareTime from newshares,user where newshares.Phone2='" + phone + "' and newshares.Phone1 = user.Phone order by newshares.ID desc";
                     s = c.prepareStatement(sql);
                     rs = s.executeQuery();
                     int i=0;
                     while (rs.next()) {
-                        map = new HashMap<String, Object>();
-                        map.put("name", rs.getString("Name"));
-                        map.put("tel", rs.getString("Phone1"));
-                        tel[i] = rs.getString("Phone1");
-                        id[i] = rs.getString("ShareID");
-                        i++;
-                        list.add(map);
+                        if(isvalid(rs.getString("ShareTime"))) {
+                            map = new HashMap<String, Object>();
+                            map.put("name", rs.getString("Name"));
+                            map.put("tel", rs.getString("Phone1"));
+                            tel[i] = rs.getString("Phone1");
+                            id[i] = rs.getString("ShareID");
+                            i++;
+                            list.add(map);
+                        }
                     }
                     if(i>0) {
                         myHandler.post(mUpdateResults);

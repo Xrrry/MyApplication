@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,9 +105,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     double targetLn = 0;
     String targetName;
     String targetPhone;
-    Boolean isOnSend = false;
-    Boolean isOnReceive = false;
-    Date date = new Date();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     public static Map instance;
     List<User> users = new ArrayList<User>();
@@ -116,23 +114,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private TextView p;
     private TextView n;
     boolean isOnOther = false;
-
-    @SuppressLint("HandlerLeak")
-    public Handler handlerUI = new Handler() {
-
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    n.setText(targetName);
-                    p.setText(targetPhone);
-                    System.out.println(targetName);
-                    System.out.println(targetPhone);
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    String nowInP = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,13 +286,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         bt11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isOnReceive == false) {
+                if (application.getStartShare() == false) {
                     Intent i2 = new Intent(Map.this, StartShare.class);
                     startActivity(i2);
 //                    Intent i2 = new Intent(Map.this, Changetest.class);
 //                    startActivity(i2);
                 } else {
-                    isOnReceive = false;
                     mTimer.cancel();
                     mTimer = null;
                     mTimerTask.cancel();
@@ -335,11 +316,39 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                             users.get(i).polyline.remove();
                         }
                     }
+                    users = new ArrayList<User>();
                     application.setStartShare(false);
 //                    application.setNames(null);
 //                    application.setPhones(null);
                     application.setLa(0);
                     application.setLn(0);
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            Connection c = null;
+                            PreparedStatement s = null;
+                            try {
+                                Class.forName("com.mysql.jdbc.Driver");
+                                c = DriverManager.getConnection(URL, USERNAME, PWD);
+                                String sql = "UPDATE sharegroups set Status='0' where Phone=" + phone + " and ShareID='" + application.getShareID() + "'";
+                                s = c.prepareStatement(sql);
+                                s.executeUpdate();
+                            } catch (ClassNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    if (s != null) s.close();
+                                    if (c != null) c.close();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }.start();
                     Toast.makeText(getApplicationContext(), "停止接收定位", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -459,6 +468,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
 
     class MyThread implements Runnable {
+        Date date = new Date();
         public void run() {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
@@ -514,13 +524,14 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                isOnReceive = true;
                 for (int i = 0; i < users.size(); i++) {
                     User user = users.get(i);
+                    System.out.println(user.name);
                     String sql2 = "select * from location where Phone = '" + user.phone + "' order by CTime desc limit 1";
                     s = c.prepareStatement(sql2);
                     rs = s.executeQuery();
                     if (rs.next()) {
+                        System.out.println(rs.getString("Lat"));
                         if (user.marker != null) {
                             LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
                             user.marker.setPosition(p);
@@ -581,6 +592,15 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             mTimer3.schedule(mTimerTask3, 0, 5000);
     }
 
+    private boolean isOnPhones(String a) {
+        for(int i=0;i<nowPhones.size();i++) {
+            if(nowPhones.get(i).equals(a)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     class MyThread3 implements Runnable {
         final MyApplication application = (MyApplication) getApplicationContext();
         public void run() {
@@ -590,7 +610,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                String sql = "SELECT Name,Phone from sharegroups where shareID='" + application.getShareID() + "' and Status='1' order by ID desc";
+                String sql = "SELECT Name,Phone from sharegroups where shareID='" + application.getShareID() + "' and Status='1'" + " and Phone<>'" + application.getPhone() + "' order by ID asc";
                 s = c.prepareStatement(sql);
                 rs = s.executeQuery();
                 LatLng point = new LatLng(0, 0);
@@ -598,7 +618,20 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                         .fromResource(R.drawable.circle2);
                 int i=0;
                 while(rs.next()) {
-                    if(!nowPhones.contains(rs.getString("Phone"))) {
+                    System.out.println(i);
+                    System.out.println(rs.getString("Phone"));
+                    System.out.println(nowPhones.size());
+                    if(!isOnPhones(rs.getString("Phone"))) {
+//                        Looper.prepare();
+//                        Toast.makeText(getApplicationContext(),rs.getString("Phone") + " 已加入共享",Toast.LENGTH_LONG).show();
+//                        Looper.loop();
+                        nowInP = rs.getString("Phone");
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(),nowInP + " 已加入共享",Toast.LENGTH_LONG).show();
+                            }
+                        });
                         final OverlayOptions option = new MarkerOptions()
                                 .position(point) //必传参数
                                 .icon(bitmap) //必传参数
@@ -624,6 +657,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 e.printStackTrace();
             } finally {
                 try {
+                    if (rs != null) rs.close();
                     if (s != null) s.close();
                     if (c != null) c.close();
                 } catch (SQLException e) {
@@ -712,22 +746,53 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             });
             if (!isOnOther) {
                 LatLng point = new LatLng(0, 0);
-                LatLng p = new LatLng(application.getLa(), application.getLn());
-                //构建Marker图标
-                BitmapDescriptor bitmap = BitmapDescriptorFactory
-                        .fromResource(R.drawable.circle2);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Connection c = null;
+                        PreparedStatement s = null;
+                        ResultSet rs = null;
+                        try {
+                            Class.forName("com.mysql.jdbc.Driver");
+                            c = DriverManager.getConnection(URL, USERNAME, PWD);
+                            String sql = "select Lat,Lng from sharepoint where ShareID='" + application.getShareID() + "'";
+                            s = c.prepareStatement(sql);
+                            rs = s.executeQuery();
+                            if(rs.next()) {
+                                LatLng p = new LatLng(rs.getDouble("Lat"), rs.getDouble("Lng"));
+                                //构建Marker图标
+                                BitmapDescriptor loc = BitmapDescriptorFactory
+                                        .fromResource(R.drawable.mark);
 
-                BitmapDescriptor loc = BitmapDescriptorFactory
-                        .fromResource(R.drawable.mark);
+                                final OverlayOptions opt = new MarkerOptions()
+                                        .position(p) //必传参数
+                                        .icon(loc) //必传参数
+                                        //设置平贴地图，在地图中双指下拉查看效果
+                                        .flat(true);
 
-                final OverlayOptions opt = new MarkerOptions()
-                        .position(p) //必传参数
-                        .icon(loc) //必传参数
-                        //设置平贴地图，在地图中双指下拉查看效果
-                        .flat(true);
+                                mBaiduMap.addOverlay(opt);
+                            }
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            try {
+                                if (rs != null) rs.close();
+                                if (s != null) s.close();
+                                if (c != null) c.close();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }.start();
 
-                mBaiduMap.addOverlay(opt);
-
+//                BitmapDescriptor bitmap = BitmapDescriptorFactory
+//                        .fromResource(R.drawable.circle2);
+//
 //                for (int i = 0; i < application.getPhones().size(); i++) {
 //                    //构建MarkerOption，用于在地图上添加Marker
 //                    final OverlayOptions option = new MarkerOptions()

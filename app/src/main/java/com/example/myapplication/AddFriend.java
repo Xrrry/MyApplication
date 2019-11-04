@@ -30,6 +30,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,8 +119,8 @@ public class AddFriend<adapter> extends AppCompatActivity {
                             try {
                                 Class.forName("com.mysql.jdbc.Driver");
                                 c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                String values = "(" + application.getPhone() + "," + str + "," + "1" + ")";
-                                String sql = "INSERT INTO newfriends (Phone1, Phone2, Status) VALUES " + values;
+                                String values = "(" + application.getPhone() + "," + str + ")";
+                                String sql = "INSERT INTO newfriends (Phone1, Phone2) VALUES " + values;
                                 s = c.prepareStatement(sql);
                                 s.executeUpdate();
                             } catch (ClassNotFoundException e) {
@@ -243,8 +244,8 @@ public class AddFriend<adapter> extends AppCompatActivity {
                                 try {
                                     Class.forName("com.mysql.jdbc.Driver");
                                     c = DriverManager.getConnection(URL, USERNAME, PWD);
-                                    String values = "(" + application.getPhone() + "," + tel[a].replaceAll(" ","") + "," + "1" + ")";
-                                    String sql = "INSERT INTO newfriends (Phone1, Phone2, Status) VALUES " + values;
+                                    String values = "(" + application.getPhone() + "," + tel[a].replaceAll(" ","") + ")";
+                                    String sql = "INSERT INTO newfriends (Phone1, Phone2) VALUES " + values;
                                     s = c.prepareStatement(sql);
                                     s.executeUpdate();
                                 } catch (ClassNotFoundException e) {
