@@ -196,6 +196,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                     }
                 }
                 application.setStartShare(true);
+                application.setFirstTo(true);
 //                application.setPhones(p);
 //                application.setNames(n);
                 Date date = new Date();
@@ -280,6 +281,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
                     }
                 }
                 application.setStartShare(true);
+                application.setFirstTo(true);
 //                application.setPhones(p);
 //                application.setNames(n);
                 Date date = new Date();

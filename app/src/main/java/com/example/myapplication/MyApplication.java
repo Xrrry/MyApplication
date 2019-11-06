@@ -20,6 +20,9 @@ public class MyApplication extends Application {
     private List<String> names;
     private boolean isStartShare = false;
     private String ShareID = "";
+    private boolean isFirstTo = true;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -79,6 +82,12 @@ public class MyApplication extends Application {
     }
     public void setShareID(String i) {
         this.ShareID = i;
+    }
+    public boolean getFirstTo () {
+        return isFirstTo;
+    }
+    public void setFirstTo (boolean i) {
+        this.isFirstTo = i;
     }
 
 }

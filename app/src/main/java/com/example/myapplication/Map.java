@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,6 +116,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     private TextView n;
     boolean isOnOther = false;
     String nowInP = null;
+    private PowerManager.WakeLock wakeLock;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,15 +375,12 @@ public class Map extends AppCompatActivity implements BDLocationListener {
             @Override
             public void onClick(String str) {
                 if (str.equals("电话")) {
-                    isOnOther = true;
                     Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + targetPhone));//跳转到拨号界面，同时传递电话号码
                     startActivity(dialIntent);
                 } else if (str.equals("短信")) {
-                    isOnOther = true;
                     Intent sendIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:" + targetPhone));//跳转到拨号界面，同时传递电话号码
                     startActivity(sendIntent);
                 } else {
-                    isOnOther = true;
                     Intent i1 = new Intent();
                     String latlng = targetLa + "," + targetLn;
                     i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName +"|latlng:" + latlng + "&coord_type=bd09ll&mode=walking&src=andr.baidu.openAPIdemo"));
@@ -744,8 +744,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     stoptb.setText("停止共享");
                 }
             });
-            if (!isOnOther) {
-                LatLng point = new LatLng(0, 0);
+            if (application.getFirstTo()) {
+                application.setFirstTo(false);
                 new Thread() {
                     @Override
                     public void run() {
@@ -815,10 +815,17 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 startTimer3();
                 Toast.makeText(getApplicationContext(), "开始接受定位", Toast.LENGTH_SHORT).show();
             }
-            else {
-                isOnOther = false;
-            }
         }
+    }
+
+    @SuppressLint("InvalidWakeLockTag")
+    @Override
+    protected void onStart() {
+        super.onStart();
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyWakelockTag");
+        wakeLock.acquire(10*60*1000L /*10 minutes*/);
     }
 
     @Override
@@ -830,6 +837,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
 
     @Override
     protected void onDestroy() {
+        wakeLock.release();
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
