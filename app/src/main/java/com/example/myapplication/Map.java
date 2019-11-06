@@ -106,7 +106,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
     double targetLn = 0;
     String targetName;
     String targetPhone;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static Map instance;
     List<User> users = new ArrayList<User>();
     List<String> nowPhones = new ArrayList<String>();

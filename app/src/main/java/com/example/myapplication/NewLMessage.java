@@ -48,7 +48,7 @@ public class NewLMessage extends AppCompatActivity {
     public static String id[] = new String[1000];
     Handler handler = new Handler();
     TextView noneTv = null;
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String time = "";
 
 

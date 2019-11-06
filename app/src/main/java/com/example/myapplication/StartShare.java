@@ -74,7 +74,7 @@ public class StartShare extends AppCompatActivity implements View.OnClickListene
     String phone = "";
     String name = "";
     final Handler myHandler = new Handler();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private List<Map<String, Object>> list;
     private List<String> p = new ArrayList<String>();
     private List<String> n = new ArrayList<String>();
