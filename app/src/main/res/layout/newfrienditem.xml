@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="#eeeeee"
     android:descendantFocusability="blocksDescendants">
 
     <LinearLayout
@@ -36,9 +37,10 @@
         android:layout_marginTop="15dp"
         android:layout_marginRight="25dp"
         android:layout_width="80dp"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_height="30dp"
-        android:background="@drawable/bt_shape3"
-        android:textColor="#ffffff"
+        android:background="@drawable/bt_shape"
+        android:textColor="@color/colorPrimary"
         android:text="添加"
         android:textSize="17dp"/>
 </LinearLayout>

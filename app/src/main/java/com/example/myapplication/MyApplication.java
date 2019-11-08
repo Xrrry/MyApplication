@@ -21,6 +21,7 @@ public class MyApplication extends Application {
     private boolean isStartShare = false;
     private String ShareID = "";
     private boolean isFirstTo = true;
+    private boolean isNewUser = false;
 
 
     @Override
@@ -88,6 +89,12 @@ public class MyApplication extends Application {
     }
     public void setFirstTo (boolean i) {
         this.isFirstTo = i;
+    }
+    public boolean getNewUser () {
+        return isNewUser;
+    }
+    public void setNewUser(boolean i) {
+        this.isNewUser = i;
     }
 
 }

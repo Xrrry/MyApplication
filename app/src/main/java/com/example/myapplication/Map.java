@@ -133,6 +133,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
         if (Signin.instance != null) {
             Signin.instance.finish();
         }
+        if (EditName.instance != null) {
+            EditName.instance.finish();
+        }
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
@@ -191,8 +194,9 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                     String sql = "select Name from user where Phone='" + phone + "'";
                     s = c.prepareStatement(sql);
                     rs = s.executeQuery();
-                    rs.next();
-                    application.setName(rs.getString("Name"));
+                    if(rs.next()){
+                        application.setName(rs.getString("Name"));
+                    }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 } catch (SQLException e) {
@@ -383,7 +387,7 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 } else {
                     Intent i1 = new Intent();
                     String latlng = targetLa + "," + targetLn;
-                    i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName +"|latlng:" + latlng + "&coord_type=bd09ll&mode=walking&src=andr.baidu.openAPIdemo"));
+                    i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName +"|latlng:" + latlng + "&coord_type=gcj02&mode=walking&src=andr.baidu.openAPIdemo"));
                     startActivity(i1);
                 }
             }

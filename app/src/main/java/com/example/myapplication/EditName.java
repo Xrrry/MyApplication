@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,10 +32,12 @@ public class EditName extends AppCompatActivity {
     String phone = "";
     String name = "";
     Handler myHandler = new Handler();
+    public static EditName instance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         // 隐藏标题栏
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
@@ -103,7 +106,15 @@ public class EditName extends AppCompatActivity {
             String a = ((EditText)findViewById(R.id.edittext1)).getText().toString();
             ((MyApplication)getApplicationContext()).setName(a);
             Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_SHORT).show();
-            finish();
+            final MyApplication application = (MyApplication) getApplicationContext();
+            if(application.getNewUser()) {
+                application.setNewUser(false);
+                Intent intent = new Intent(getApplicationContext(), Map.class);
+                startActivity(intent);
+            }
+            else {
+                finish();
+            }
         }
     };
 }

@@ -16,6 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
@@ -31,6 +37,9 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
 
     private boolean flag;  // 操作是否成功
     public static Signin instance;
+    private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
+    private static final String USERNAME = "root";
+    private static final String PWD = "xiaoruoruo1999";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +82,7 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
             case R.id.button2:
                 if (!TextUtils.isEmpty(etPhoneNumber.getText())) {
                     if (etPhoneNumber.getText().length() == 11) {
+
                         phoneNumber = etPhoneNumber.getText().toString();
                         SMSSDK.getVerificationCode("86", phoneNumber); // 发送验证码给号码的 phoneNumber 的手机
                         etVerificationCode.requestFocus();
@@ -122,19 +132,16 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
                     // 校验验证码，返回校验的手机和国家代码
                     Toast.makeText(getApplicationContext(), "验证成功", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), Map.class);
                     EditText ed1 = (EditText) findViewById(R.id.editText);
-                    String phone = ed1.getText().toString();
-                    MyApplication application = (MyApplication) getApplicationContext();
+                    final String phone = ed1.getText().toString();
+                    final MyApplication application = (MyApplication) getApplicationContext();
                     application.setPhone(phone);
 
                     SharedPreferences sp = getSharedPreferences("login", getApplicationContext().MODE_PRIVATE);
                     sp.edit()
                             .putString("phone", phone)
                             .apply();
-
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    addNewUser(phone);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                     // 获取验证码成功，true为智能验证，false为普通下发短信
                     Toast.makeText(getApplicationContext(), "验证码已发送", Toast.LENGTH_SHORT).show();
@@ -153,6 +160,76 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
             }
         }
     };
+    private void addNewUser(final String phone) {
+        final MyApplication application = (MyApplication) getApplicationContext();
+        new Thread() {
+            @Override
+            public void run() {
+                Connection c = null;
+                PreparedStatement s = null;
+                ResultSet rs = null;
+                try {
+                    Class.forName("com.mysql.jdbc.Driver");
+                    c = DriverManager.getConnection(URL, USERNAME, PWD);
+                    String sql = "select Phone from user where Phone='" + phone + "'";
+                    s = c.prepareStatement(sql);
+                    rs = s.executeQuery();
+                    if(!rs.next()) {
+                        application.setNewUser(true);
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                Connection c = null;
+                                PreparedStatement s = null;
+                                try {
+                                    Class.forName("com.mysql.jdbc.Driver");
+                                    c = DriverManager.getConnection(URL, USERNAME, PWD);
+                                    String sql = "INSERT INTO user (Phone, Name) VALUES "+ "('" + phone + "','用户昵称')";
+                                    s = c.prepareStatement(sql);
+                                    s.executeUpdate();
+                                } catch (ClassNotFoundException e) {
+                                    e.printStackTrace();
+                                } catch (SQLException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    try {
+                                        if (s != null) s.close();
+                                        if (c != null) c.close();
+                                        Intent intent = new Intent(getApplicationContext(), EditName.class);
+                                        startActivity(intent);
+                                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }.start();
+                    }
+                    else {
+                        Intent intent = new Intent(getApplicationContext(), Map.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (rs != null) rs.close();
+                        if (s != null) s.close();
+                        if (c != null) c.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+    }
 
     @Override
     protected void onDestroy() {
