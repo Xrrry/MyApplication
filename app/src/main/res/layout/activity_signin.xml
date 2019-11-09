@@ -95,6 +95,7 @@
         android:background="#00FFFFFF"
         android:text="获取验证码"
         android:textColor="#FFFFFF"
+        android:textColorHint="#888888"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"

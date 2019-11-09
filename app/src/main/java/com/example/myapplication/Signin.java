@@ -40,6 +40,7 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
     private static final String URL = "jdbc:mysql://cdb-hecbapbe.cd.tencentcdb.com:10013/mainDB";
     private static final String USERNAME = "root";
     private static final String PWD = "xiaoruoruo1999";
+    private Handler Myhandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,10 +83,15 @@ public class Signin extends AppCompatActivity implements View.OnClickListener {
             case R.id.button2:
                 if (!TextUtils.isEmpty(etPhoneNumber.getText())) {
                     if (etPhoneNumber.getText().length() == 11) {
-
                         phoneNumber = etPhoneNumber.getText().toString();
                         SMSSDK.getVerificationCode("86", phoneNumber); // 发送验证码给号码的 phoneNumber 的手机
                         etVerificationCode.requestFocus();
+                        Myhandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendVerificationCode.setClickable(false);
+                            }
+                        });
                     }
                     else {
                         Toast.makeText(this, "请输入完整的电话号码", Toast.LENGTH_SHORT).show();
