@@ -58,20 +58,6 @@ public class MyApplication extends Application {
         this.ln = ln;
     }
 
-    public List<String> getPhones() {
-        return phones;
-    }
-    public void setPhones(List<String> p) {
-        this.phones = p;
-    }
-
-    public List<String> getNames() {
-        return names;
-    }
-    public void setNames(List<String> n) {
-        this.names = n;
-    }
-
     public boolean getStartShare () {
         return isStartShare;
     }

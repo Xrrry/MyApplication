@@ -387,7 +387,8 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                 } else {
                     Intent i1 = new Intent();
                     String latlng = targetLa + "," + targetLn;
-                    i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName +"|latlng:" + latlng + "&coord_type=gcj02&mode=walking&src=andr.baidu.openAPIdemo"));
+                    i1.setData(Uri.parse("baidumap://map/direction?destination=name:"+ targetName
+                            +"|latlng:" + latlng + "&coord_type=gcj02&mode=walking&src=andr.baidu.openAPIdemo"));
                     startActivity(i1);
                 }
             }
@@ -793,27 +794,6 @@ public class Map extends AppCompatActivity implements BDLocationListener {
                         }
                     }
                 }.start();
-
-//                BitmapDescriptor bitmap = BitmapDescriptorFactory
-//                        .fromResource(R.drawable.circle2);
-//
-//                for (int i = 0; i < application.getPhones().size(); i++) {
-//                    //构建MarkerOption，用于在地图上添加Marker
-//                    final OverlayOptions option = new MarkerOptions()
-//                            .position(point) //必传参数
-//                            .icon(bitmap) //必传参数
-//                            //设置平贴地图，在地图中双指下拉查看效果
-//                            .flat(true)
-//                            .title(String.valueOf(i));
-//
-//                    User u = new User();
-//                    u.phone = application.getPhones().get(i);
-//                    u.name = application.getNames().get(i);
-//                    //在地图上添加Marker，并显示
-//                    u.marker = (Marker) mBaiduMap.addOverlay(option);
-//                    u.list = new ArrayList<LatLng>();
-//                    users.add(u);
-//                }
                 startTimer();
                 startTimer2();
                 startTimer3();
